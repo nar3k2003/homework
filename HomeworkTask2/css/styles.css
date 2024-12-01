@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'SF Pro';
-    src: url('path-to-sf-pro-font.woff2') format('woff2');
+    src: url('../font/sf-pro-display-light.ttf') format('woff2');
 }
 
 *{
@@ -28,6 +28,7 @@ body{
 }
 
 .button{
+    border: none;
     width: 63px;
     height: 63px;
     border-radius: 50%;
@@ -35,7 +36,10 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size: 25px;
+    color: white;
     cursor: pointer;
+    font-family: 'SF Pro', Roboto, Arial, sans-serif;
 }
 
 .button:active{
