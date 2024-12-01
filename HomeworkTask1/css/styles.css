@@ -1,0 +1,22 @@
+#sentence{
+    font-size: 48px;
+    font-weight: bold;
+    background: linear-gradient(45deg, #ff6b6b, #f5a623, #4a90e2, #50e3c2);
+    background-size: 400% 400%;
+    color: transparent;
+    background-clip: text;
+    cursor: pointer;
+    animation: gradientText 5s ease infinite;  
+}
+
+@keyframes gradientText {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}

@@ -1,0 +1,92 @@
+@font-face {
+    font-family: 'SF Pro';
+    src: url('path-to-sf-pro-font.woff2') format('woff2');
+}
+
+*{
+    margin: 0;
+    padding: 0;
+}
+
+body{
+    background-color: #5C5B60;
+}
+
+.calculatorContainer{
+    font-family: 'SF Pro', Roboto, Arial, sans-serif;
+    margin: 25px auto;
+    width: 295px;
+    height: 510px;
+    background-color: #010101;
+    border-radius: 38px;
+    color: white;
+    font-size: 25px;
+    font-weight: 100;
+    /* padding: 10px; */
+    display: flex;
+    flex-direction: column;
+}
+
+.button{
+    width: 63px;
+    height: 63px;
+    border-radius: 50%;
+    background-color: #2A2A2C;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.button:active{
+    background-color: #424245;
+}
+
+.functions
+{
+    font-size: 30px;
+    background-color: #5C5B60;
+}
+
+.functions:active{
+    background-color: #7a7880;
+}
+
+.mathOperations{
+    font-size: 40px;
+    background-color: #FF9F0A;
+}
+
+.mathOperations:active{
+    background-color: #ffb444;
+
+}
+
+.row{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.display{
+    flex: 3;
+    display: flex;
+    justify-content: flex-end;
+    margin: 5px 15px;
+    align-items: flex-end;
+    font-size: 45px;
+    overflow: hidden;
+}
+
+.buttons{
+    flex: 7;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 0 12px 12px 12px;
+}
+
+.number0{
+    min-width: 132px;
+    border-radius: 31px;
+}
