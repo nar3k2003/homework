@@ -1,0 +1,51 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+.container{
+    height: 600px;
+    width: 100%;
+}
+
+#content{
+    position: relative;
+    height: 600px;
+    width: 100%;
+    background-image: url(../img/img1.jpg);
+    background-attachment: fixed;
+    background-size: contain;
+}
+
+.rightLeft{
+    cursor: pointer;
+}
+
+.rightLeft button:first-child{
+    position: absolute;
+    top: 50%;
+    left: 2%;
+}
+
+.rightLeft button:last-child{
+    position: absolute;
+    top: 50%;
+    right: 2%;
+}
+
+.threePoint{
+    position: absolute;
+    gap: 15px;
+    top: 0;
+    left: 50%;
+    top: 95%;
+}
+
+.threePoint button{
+    border: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: black;
+    cursor: pointer;
+}
