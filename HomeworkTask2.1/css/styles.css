@@ -126,9 +126,6 @@ body::-webkit-scrollbar {
 }
 
 
-
-
-
 .headerMobileMenu a{
     color: black;
     text-decoration: none;
@@ -335,6 +332,11 @@ body::-webkit-scrollbar {
     font-size: 25px;
 }
 
+.headerLogo > img{
+    height: 85px;
+    width: 75px;
+}
+
 .headerMain{
     list-style: none;
     text-decoration: none;
@@ -374,6 +376,11 @@ body::-webkit-scrollbar {
 
 .headerLogin > div{
     padding: 10px;
+}
+
+.headerMenuButton > button > img{
+    width: 20px;
+    height: 20px;
 }
 
 /* main ------------------------------------------------------------------------------- */
@@ -468,7 +475,7 @@ h1
     color: rgb(124, 0, 0);
 }
 
-#nameError, #mailError, #commentsError, #robotError, .contentMainLeft i{
+#nameError, #mailError, #commentsError, #robotError, #mailInvalidError, .contentMainLeft i{
     font-size: 13px;
     color: rgb(124, 0, 0);
 }
@@ -478,14 +485,15 @@ h1
     font-weight: bold;
 }
 
-#nameError, #mailError, #commentsError, #robotError{
+#nameError, #mailError, #commentsError, #robotError, #mailInvalidError{
     display: none;
 }
 
 #nameError.activeError, 
 #mailError.activeError, 
 #commentsError.activeError,
-#robotError.activeError {
+#robotError.activeError,
+#mailInvalidError.activeError {
     display: block !important;
 }
 
@@ -679,47 +687,19 @@ h1
     color: white;
 }
 
+
+/* table ------------------------------------------------------------------- */
+#table{
+    display: none;
+    border: black solid 1px;
+}
+
+#table.activeTable{
+    display: block;
+}
+
+
 /* media ------------------------------------------------------------------ */
-
-/* @media screen and (min-width: 1440px) {
-    .headerContainer, .mainContainer, .footerContainer{
-        padding-left: 100px;
-        padding-right: 100px;
-    }
-    .headerMenuButton {
-        display: none;
-    }
-}
-
-@media screen and (max-width: 1440px) {
-    .headerContainer, .mainContainer, .footerContainer {
-        padding-left: 100px;
-        padding-right: 100px;
-    }
-    .headerMain {
-        display: none;
-    }
-}
-
-@media screen and (max-width: 768px) {
-    .headerContainer, .mainContainer, .footerContainer{
-        padding-left: 16px;
-        padding-right: 16px;
-    }
-    .contentBox {
-        flex-direction: column;
-    }
-}
-
-@media screen and (max-width: 500px) {
-    .headerContainer {
-        justify-content: space-evenly;
-    }
-    .headerLogin {
-        flex-direction: row;
-        gap: 30px;
-    }
-} */
 
 
 @media screen and (min-width: 1024px) and (max-width: 1440px) {
