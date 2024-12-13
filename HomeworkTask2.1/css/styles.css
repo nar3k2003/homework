@@ -691,7 +691,18 @@ h1
 /* table ------------------------------------------------------------------- */
 #table{
     display: none;
-    border: black solid 1px;
+    width: 100%;
+    border-collapse: collapse;
+
+}
+
+table{
+    width: 100%;
+}
+
+table, th, td {
+    border: 1px solid;
+    padding: 5px;
 }
 
 #table.activeTable{
