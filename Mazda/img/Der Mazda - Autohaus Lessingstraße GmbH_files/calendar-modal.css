@@ -1,0 +1,518 @@
+.calendar-m {
+    height: max-content;
+    width: max-content;
+    background-color: var(--bg-main);
+    border-radius: 30px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    /* transform: scale(1.25); */
+}
+
+.light .calendar-m {
+    box-shadow: var(--shadow);
+}
+
+.calendar-m-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 25px;
+    font-weight: 600;
+    color: var(--color-txt);
+    padding: 10px;
+}
+
+.calendar-m-body {
+    padding: 10px;
+}
+
+.calendar-m-week-day {
+    height: 50px;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    font-weight: 600;
+}
+
+.calendar-m-week-day div {
+    display: grid;
+    place-items: center;
+    color: var(--bg-second);
+}
+
+.calendar-m-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    color: var(--color-txt);
+}
+
+.calendar-m-days div {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    position: relative;
+    cursor: pointer;
+    animation: to-top 1s forwards;
+    /* border-radius: 50%; */
+}
+
+.vip-consultation .left-part {
+    margin-top: 20px;
+}
+
+html.other .vip-consultation .left-part {
+    margin-top: -32%;
+}
+
+.calendar-m-days div span {
+    position: absolute;
+}
+
+.calendar-m-days .calendar-m-day-hover:hover span {
+    transition: width 0.2s ease-in-out, height 0.2s ease-in-out;
+}
+
+.selected {
+    border: 1px solid red;
+}
+
+.calendar-m-days div span:nth-child(1),
+.calendar-m-days div span:nth-child(3) {
+    width: 2px;
+    height: 0;
+    background-color: var(--color-txt);
+}
+
+.calendar-m-days div:hover span:nth-child(1),
+.calendar-m-days div:hover span:nth-child(3) {
+    height: 100%;
+}
+
+.calendar-m-days div span:nth-child(1) {
+    bottom: 0;
+    left: 0;
+}
+
+.calendar-m-days div span:nth-child(3) {
+    top: 0;
+    right: 0;
+}
+
+.calendar-m-days div span:nth-child(2),
+.calendar-m-days div span:nth-child(4) {
+    width: 0;
+    height: 2px;
+    background-color: var(--color-txt);
+}
+
+.calendar-m-days div:hover span:nth-child(2),
+.calendar-m-days div:hover span:nth-child(4) {
+    width: 100%;
+}
+
+.calendar-m-days div span:nth-child(2) {
+    top: 0;
+    left: 0;
+}
+
+.calendar-m-days div span:nth-child(4) {
+    bottom: 0;
+    right: 0;
+}
+
+.calendar-m-days div:hover span:nth-child(2) {
+    transition-delay: 0.2s;
+}
+
+.calendar-m-days div:hover span:nth-child(3) {
+    transition-delay: 0.4s;
+}
+
+.calendar-m-days div:hover span:nth-child(4) {
+    transition-delay: 0.6s;
+}
+
+.calendar-m-days div.curr-date,
+.calendar-m-days div.curr-date:hover {
+    background-color: #c40037;
+    color: var(--white);
+    border-radius: 50%;
+}
+
+.calendar-m-days div.curr-date span {
+    display: none;
+}
+
+.month-m-picker {
+    padding: 5px 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: block;
+    font-size: 15px;
+}
+
+.month-m-picker:hover {
+    background-color: var(--color-hover);
+}
+
+.year-m-picker {
+    display: flex;
+    align-items: center;
+}
+
+.year-m-change {
+    height: 40px;
+    width: 15px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    position: absolute;
+    cursor: pointer;
+    left: 80%;
+    top: 0 !important;
+}
+
+.year-m-change:hover {
+    background-color: var(--color-hover);
+}
+
+.calendar-m-footer {
+    padding: 10px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.toggle {
+    display: flex;
+}
+
+.toggle span {
+    margin-right: 10px;
+    color: var(--color-txt);
+}
+
+.dark-mode-switch {
+    position: relative;
+    width: 48px;
+    height: 25px;
+    border-radius: 14px;
+    background-color: var(--bg-second);
+    cursor: pointer;
+}
+
+.dark-mode-switch-ident {
+    width: 21px;
+    height: 21px;
+    border-radius: 50%;
+    background-color: var(--bg-main);
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: left 0.2s ease-in-out;
+}
+
+.dark .dark-mode-switch .dark-mode-switch-ident {
+    top: 2px;
+    left: calc(2px + 50%);
+}
+
+.month-m-list,
+.year-m-list {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: var(--bg-main);
+    padding: 20px;
+    grid-template-columns: repeat(1, auto);
+    gap: 0;
+    display: grid;
+    transform: scale(1.5);
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.month-m-list.show,
+.year-m-list.show {
+    transform: scale(1);
+    visibility: visible;
+    pointer-events: visible;
+    transition: all 0.2s ease-in-out;
+    z-index: 9999999999999;
+    background: #ffff;
+}
+
+.month-m-list>div,
+.year-m-list>div {
+    display: grid;
+    place-items: center;
+}
+
+.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #f7ecec66;
+    color: #d1cccc;
+}
+
+.month-m-list>div>div,
+.year-m-list>div>div {
+    width: 100%;
+    padding: 5px;
+    border-radius: 10px;
+    text-align: center;
+    cursor: pointer;
+    color: var(--color-txt);
+}
+
+.month-m-list>div>div:hover,
+.year-m-list>div>div:hover {
+    background-color: var(--color-hover);
+}
+
+@keyframes to-top {
+    0% {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+#fdata h3 {
+    color: red;
+    font-family: 'Mazda Type';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 36px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #1B1B1B;
+}
+
+.col-md-6 p {
+    font-family: 'Mazda Type';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 19px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #999999;
+}
+
+#fdata form input {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px 24px;
+    gap: 8px;
+    width: 352px;
+    height: 56px;
+    border: 1px solid #E2E2E2;
+    border-radius: 28px;
+    margin-top: 1.2rem
+}
+
+:placeholder {
+    font-family: 'Mazda Type';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 22px;
+    color: #999999;
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+}
+
+.red {
+    color: #C40037 !important
+}
+
+.checkboxs {
+    display: flex;
+    margin-top: 0;
+}
+
+.checkboxs input {
+    width: 10% !important;
+    height: 24px !important;
+    left: 0px !important;
+    top: 0px !important;
+
+    background-color: #C40037 !important;
+    border-radius: 4px !important;
+}
+
+.checkboxs input::before {
+    background-color: red !important;
+}
+
+.text_red {
+    margin-left: 1rem;
+    margin-top: 1rem
+}
+
+#data .btn button,
+#fdata .btn button {
+    justify-content: center;
+    width: 220px !important;
+    height: 56px !important;
+    left: 960px;
+    top: 1874px;
+    background: #C40037;
+    border-radius: 28px;
+    border: none !important;
+    font-family: 'Mazda Type';
+    font-style: normal;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    line-height: 19px;
+    text-align: center;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #FFFFFF;
+}
+
+#data .fa,
+#data .far,
+#data .fas,
+#fdata .fa,
+#fdata .far,
+#fdata .fas {
+    font-family: 'FontAwesome' !important;
+    width: 16px !important;
+}
+
+#data .btn,
+#fdata .btn {
+    margin-top: 1.2rem;
+}
+
+#data .btn img,
+#fdata .btn img {
+    width: 19px;
+    margin-left: 0.8rem;
+}
+
+#fcontainer {
+    display: block;
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#fcontainer #finp {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+#fdata .checkmark {
+    position: absolute;
+    height: 25px;
+    top: 1rem;
+    left: 0;
+    width: 25px;
+    background-color: #eee;
+    border: 1px solid #cdcdcd;
+}
+
+#fcontainer:hover #finp~.checkmark {
+    background-color: #ccc;
+}
+
+#fcontainer #finp:checked~.checkmark {
+    background-color: #C40037;
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+#fcontainer #finp:checked~.checkmark:after {
+    display: block;
+}
+
+#fcontainer .checkmark:after {
+    left: 9px;
+    top: 3px;
+    width: 8px;
+    height: 14px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.red-calendar-m {
+    color: #c40037 !important;
+}
+
+.calendar-m-day-hover {
+    border: 1px solid #eeee;
+    border-radius: 50% !important;
+
+}
+
+.flex-calendar-m {
+    width: 80% !important;
+    margin: auto;
+    padding: 100px !important;
+    background: #ffff;
+}
+
+#fdata .checkboxs {
+    text-align: left;
+    line-height: 1.3rem;
+}
+
+@media screen and (max-width: 800px) {
+    .btn img {
+        height: 13px !important;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .ich-block {
+        width: 15%;
+    }
+
+    .flex-calendar-m {
+        width: 100% !important;
+        padding: 15px !important;
+    }
+
+    .flex-calendar-m .left-part,
+    .flex-calendar-m .right-part {
+        margin-left: -2%;
+    }
+}
+
+#jGrowl {
+    display: none !important;
+}

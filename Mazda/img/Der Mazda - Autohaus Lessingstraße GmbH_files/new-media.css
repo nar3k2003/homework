@@ -1,0 +1,725 @@
+.cx-first-part {
+    height: 500px;
+}
+.cx-first-part:after {
+    content: '';
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgba(0,0,0,.5);
+}
+.title--h1-responsive {
+    padding-top: 2rem;
+}
+.hero__content-3fLPW {
+    padding-top: 15vh;
+}
+.__container-1 {
+    padding-bottom: 100px!important;
+}
+.container-3EwLM.padding-bottom-ZXUR0 {
+    padding-bottom: 0;
+}
+.pink-title {
+    color: #c2063a;
+}
+.car-logos {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.brand .marka_img {
+    max-height: 80px;
+}
+.fmmMain input.radio, .fmmMain input[type=radio] {
+    width: 20px;
+    height: 20px;
+}
+.fmmMain input.radio:checked:after, .fmmMain input[type=radio]:checked:after {
+    width: 10px;
+    height: 10px;
+    background: #c2063a;
+    margin: -5px 0 0 -5px;
+}
+.brand {
+    margin-right: 2rem;
+}
+.cars-with-brand {
+    background: #f5f5f5;
+    padding: 2rem 0;
+}
+.cars-with-brand h2 {
+    padding-bottom: 2rem;
+}
+.marka-items {
+    width: 700px;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.m-item {
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    display: flex;
+    height: 150px;
+    width: 150px;
+    cursor: pointer;
+    flex-flow: column;
+}
+.m-item .label {
+    display: flex;
+}
+.m-item .label p {
+    margin: auto!important;
+}
+#Mazda-block .m-item {
+    padding: 5px;
+}
+#Mazda-block .marka-items .img {
+    height: 50px;
+    background-size: contain;
+}
+.marka-items .img {
+    filter: contrast(0.93);
+    width: 100%;
+    height: 70px;
+
+}
+.marka-items .img img {
+    width: 100%;
+    height: 100%;
+}
+.brand-title {
+    text-align: center;
+}
+.pink-block {
+    margin-top: 0;
+    background: url(/assets/media/pink-bg.png) no-repeat;
+    height: 200px;
+    align-items: center;
+    background-size: cover;
+    padding-bottom: 0!important;
+}
+.block-inner {
+    padding: 0!important;
+    height: 80%;
+    flex-direction: row;
+    width: 19%!important;
+}
+.block-inner p {
+    margin-left: 10px;
+    color: #fff;
+}
+.media-header {
+    width: 79.4%;
+    height: 35px;
+    display: flex;
+    margin: auto;
+    color: #fff;
+    font-weight: 700;
+    line-height: 36px;
+    margin-bottom: .8rem;
+}
+.header-left {
+    cursor: pointer;
+    width: 80%;
+    text-transform: uppercase;
+    background-color: #d1d1d1;
+    padding-left: .8rem;
+    margin-right: .8rem;
+}
+.header-left.selected,
+.header-right.selected {
+    background-color: #c2063a!important;
+}
+.header-right {
+    cursor: pointer;
+    text-align: center;
+    text-transform: uppercase;
+    width: 20%;
+    background-color: #d1d1d1;
+}
+
+.gallery-container {
+    width: 80%;
+    max-width: 100%;
+    margin: auto;
+}
+.image-gallery {
+    position: relative;
+    /* display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: auto;
+    grid-gap: .5rem;
+    grid-template-areas: 'loading-1 loading-1 loading-2 loading-2'
+                         'loading-1 loading-1 loading-5 loading-6'
+                         'loading-3 loading-4 loading-5 loading-6'
+                         'loading-3 loading-7 loading-7 loading-6'
+                         ; */
+}
+@media only screen and (max-width: 768px) {
+    .image-gallery {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-areas: 'loading-1 loading-2'
+                             'loading-3 loading-4'
+                             'loading-5 loading-6'
+                             'loading-7 loading-8'
+                             ;
+    }
+    .image-gallery a {
+        min-height: 100%!important;
+    }
+}
+@media only screen and (max-width: 500px) {
+    .image-gallery {
+        grid-template-columns: repeat(1, 1fr);
+        grid-template-areas: 'loading-1' 'loading-2'
+                             'loading-3' 'loading-4'
+                             'loading-5' 'loading-6'
+                             'loading-7' 'loading-8'
+                             ;
+    }
+}
+.image-gallery a {
+    width: 100%;
+    height: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+.image-gallery a img,
+.car-descr {
+    display: none;
+    z-index: 1;
+    position: absolute;
+}
+/* .img-5 img {
+    top: 30%;
+}
+.img-5 .car-descr {
+    top: 45%!important;
+} */
+.car-descr {
+    top: 30%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 95%;
+}
+.car-descr p {
+    position: relative;
+}
+.image-gallery .car-descr h3 {
+    font-size: 16px;
+    padding-bottom: 0.5rem;
+}
+.image-gallery .car-descr p {
+    font-size: 12px;
+}
+.image-gallery .car-descr p,
+.image-gallery .car-descr h3 {
+    line-height: 1.2;
+    text-align: center;
+    color: #fff;
+}
+.image-gallery a:hover img,
+.image-gallery a:hover .car-descr {
+    display: block;
+}
+.image-gallery a:hover:after {
+    content: '';
+    width: 98%;
+    height: 98%;
+    position: absolute;
+    border: 2px solid #fff;
+    background-color: rgba(0,0,0,.8);
+}
+.loading-1 {
+    height: 350px;
+    width: 50%;
+    /* min-height: 19.5rem;
+    grid-area: loading-1; */
+}
+.loading-2 {
+    height: 255px;
+    width: 49.5%;
+    float: right;
+    margin-top: -350px;
+    /* min-height: 12em; */
+    /* grid-area: loading-2; */
+}
+.loading-3 {
+    height: 350px;
+    width: 25%;
+    margin-top: 0.5%;
+    /* min-height: 24.5rem;
+    grid-area: loading-3; */
+}
+.loading-4 {
+    height: 175px;
+    width: 24.5%;
+    position: absolute;
+    top: 50%;
+    left: 25.5%;
+    /* grid-area: loading-4; */
+}
+.loading-5 {
+    height: 268px;
+    width: 25%;
+    position: absolute;
+    top: 37%;
+    left: 50.5%;
+    /* min-height: 19.5rem; */
+    /* grid-area: loading-5; */
+}
+.loading-6 {
+    height: 175px;
+    position: absolute;
+    width: 50%;
+    top: 75.5%;
+    left: 25.5%;
+    /* min-height: 32rem;
+    grid-area: loading-6; */
+}
+.loading-7 {
+    height: 63.4%;
+    width: 24%;
+    position: absolute;
+    top: 37%;
+    left: 75.9%;
+    /* grid-area: loading-7; */
+}
+.loading-8 {
+    /* grid-area: loading-8; */
+}
+.c-video {
+    position: relative;
+    cursor: pointer;
+    width: 33.3%!important;
+}
+.video-poster {
+    position:absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+}
+.video-poster img {
+    height: 100%;
+    width: 100%;
+}
+.all-medias {
+    display: flex;
+    flex-wrap: wrap;
+    width: 80%;
+    margin: auto;
+}
+.media-item {
+    border: 4px solid #fff;
+    width: 25%;
+    position: relative;
+    margin-bottom: 60px;
+}
+.mg-presse .media-item {
+    border-color: transparent;
+    text-align: left;
+}
+.mg-presse .media-item .comparison {
+    display: none;
+}
+
+#video-block .media-item {
+    height: 250px;
+}
+#video-block .media-item video {
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+}
+.image-container {
+    height: 150px;
+}
+.p-main-photo {
+    height: 100%;
+    width: 100%;
+}
+.p-main-photo .thumb {
+    width: 100%;
+    background-size: cover;
+}
+.p-header {
+    margin-bottom: 1rem;
+    background-color: #d1d1d1;
+    padding: .5rem;
+    height: 40px;
+    margin-bottom: 8px;
+}
+.p-header strong:nth-child(1) {
+    float: left;
+}
+.p-header strong:nth-child(2) {
+    border-left: 2px solid #fff;
+    padding-left: .5rem;
+    float: right;
+}
+.p-header strong {
+    font-size: 12px;
+}
+.media-item p {
+    color: #6e6e6e;
+    line-height: 1.2;
+    font-size: 12px;
+    width: 100%;
+}
+.media-item .pink-title {
+    letter-spacing: inherit;
+}
+.mg-presse .media-item .pink-title {
+    font-size: 1.15rem;
+}
+.p-footer {
+    margin-top: 1rem;
+    position: absolute;
+    bottom: -45px;
+}
+.p-footer a {
+    text-transform: uppercase;
+    background: #c2063a;
+    width: 130px;
+    height: 30px;
+    line-height: 31px;
+    color: #fff;
+    text-align: center;
+    border-radius: 25px;
+    font-weight: 700;
+    display: inline-block;
+}
+.p-footer div {
+    float: right;
+}
+.d-none {
+    display: none!important;
+}
+@media only screen and (max-width: 1024px) {
+    .all-medias {
+        justify-content: center;
+    }
+    .media-item {
+        width: 50%;
+    }
+}
+@media only screen and (max-width: 768px) {
+    .marka-items,
+    .c-video {
+        width: 100%!important;
+    }
+    .pink-block {
+        flex-wrap: nowrap;
+    }
+    .block-inner {
+        width: 100%!important;
+        flex-direction: column;
+    }
+    .header-right,
+    .header-left {
+        width: 100%;
+    }
+    .media-item {
+        width: 100%;
+    }
+    .block-inner {
+        height: unset;
+    }
+}
+.c-video .play-bottom {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    border: none;
+    z-index: 2;
+    margin-top: 0!important;
+    cursor: pointer;
+}
+.not-playing:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,.8);
+    z-index: 1;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+.not-playing.ehs-with-poster0:after {
+    background-image: url('/assets/media/media_mazda/2do/MGEHS_FINAL.jpg')
+}
+.not-playing.ehs-with-poster1:after {
+    background-image: url('/assets/media/media_mazda/2do/MG Bild und Video/EHS/video_01.jpg')
+}
+.not-playing.ehs-with-poster2:after {
+    background-image: url('/assets/media/media_mazda/2do/MG Bild und Video/EHS/Video_02.jpg')
+}
+.not-playing.ehs-with-poster3:after {
+    background-image: url('/assets/media/media_mazda/2do/MG Bild und Video/EHS/Video_03.jpg')
+}
+.not-playing.mg4-with-poster0:after {
+    background-image: url('/assets/media/media_mazda/2do/mg4/video_01_preview.jpg');
+}
+.not-playing.m2H-with-poster0:after {
+    background-image: url('/assets/media/media_mazda/2do/M2HYBRID_FINAL.jpg');
+}
+
+.not-playing.m2H-with-poster1:after {
+    background-image: url('/assets/media/media_mazda/2do/M2HYBRID_UPDATE.jpg');
+}
+.not-playing.mg4-with-poster1:after {
+    background-image: url('/assets/media/media_mazda/2do/mg4/video_02_2preview.jpg');
+}
+.not-playing.mg4-with-poster2:after {
+    background-image: url('/assets/media/media_mazda/2do/mg4/video_03_preview.jpg');
+}
+.not-playing.marvel-with-poster0:after {
+    background-image: url('/assets/media/media_mazda/2do/MG Bild und Video/Marvel R/video_01.jpg');
+}
+.not-playing.marvel-with-poster1:after{
+    background-image: url('/assets/media/media_mazda/2do/MG Bild und Video/Marvel R/video_02.jpg');
+}
+.not-playing.marvel-with-poster2:after{
+    background-image: url('/assets/media/media_mazda/2do/MG Bild und Video/Marvel R/Video_03.jpg');
+}
+.not-playing.marvel-with-poster3:after{
+    background-image: url('/assets/media/media_mazda/2do/MG Bild und Video/Marvel R/Video_04.jpg');
+}
+.not-playing.zs-with-poster0:after {
+    background-image: url('/assets/media/media_mazda/2do/ZSEV_FINAL.jpg')
+}
+.not-playing.zs-with-poster1:after {
+    background-image: url('/assets/media/media_mazda/2do/MG Bild und Video/ZS Facelift/video_01.jpg')
+}
+.not-playing.zs-with-poster2:after {
+    background-image: url('/assets/media/media_mazda/2do/MG Bild und Video/ZS Facelift/video_02.jpg');
+}
+.not-playing.zs-with-poster3:after {
+    background-image: url('/assets/media/media_mazda/2do/MG Bild und Video/ZS Facelift/Video_03.jpg');
+}
+.not-playing.zs-with-poster4:after {
+    background-image: url('/assets/media/media_mazda/2do/MG Bild und Video/ZS Facelift/Video_04.jpg');
+}
+.not-playing.m2-with-poster0:after {
+    background-image: url('/assets/media/media_mazda/2do/Mazda Bild und Video/BILD/m2/video_01.jpg');
+}
+.not-playing.m2-with-poster1:after {
+    background-image: url('/assets/media/media_mazda/2do/Mazda Bild und Video/BILD/m2/Video_02.jpg');
+}
+.not-playing.mx30-with-poster0:after {
+    background-image: url('/assets/media/media_mazda/2do/MX30_FINAL.jpg');
+}
+.not-playing.mx30-with-poster1:after {
+    background-image: url('/assets/media/media_mazda/2do/Mazda Bild und Video/BILD/mx30/video_01.jpg');
+}
+.not-playing.mx30-with-poster2:after{
+    background-image: url('/assets/media/media_mazda/2do/Mazda Bild und Video/BILD/mx30/video_02.jpg');
+}
+.not-playing.mx30-with-poster3:after{
+    background-image: url('/assets/media/media_mazda/2do/Mazda Bild und Video/BILD/mx30/video_03.jpg');
+}
+.not-playing.mx30-with-poster4:after{
+    background-image: url('/assets/media/media_mazda/2do/Mazda Bild und Video/BILD/mx30/video_04.jpg');
+}
+.not-playing.mx30-with-poster5:after{
+    background-image: url('/assets/media/media_mazda/2do/Mazda Bild und Video/BILD/mx30/video_05.jpg');
+}
+.not-playing.mx30-with-poster6:after{
+    background-image: url('/assets/media/media_mazda/2do/Mazda Bild und Video/BILD/mx30/Video_06.jpg');
+}
+.not-playing.m3-with-poster0:after{
+    background-image: url('/assets/media/media_mazda/2do/M3_FINAL.jpg');
+}
+.not-playing.m3-with-poster1:after{
+    background-image: url('/assets/media/media_mazda/2do/M3_UPDATE.jpg');
+}
+.not-playing.m3-with-poster2:after{
+    background-image: url('/assets/media/media_mazda/2do/Mazda Bild und Video/BILD/m3/video_01.jpg');
+}
+.not-playing.m3-with-poster3:after{
+    background-image: url('/assets/media/media_mazda/2do/Mazda Bild und Video/BILD/m3/video_02.jpg');
+}
+.not-playing.m3-with-poster4:after{
+    background-image: url('/assets/media/media_mazda/2do/Mazda Bild und Video/BILD/m3/Video_03.jpg');
+}
+.not-playing.m6-with-poster0:after{
+    background-image: url('/assets/media/media_mazda/2do/M6_UPDATE.jpg');
+}
+.not-playing.m6-with-poster1:after{
+    background-image: url('/assets/media/media_mazda/2do/Mazda Bild und Video/BILD/m6/Video_01.jpg');
+}
+.not-playing.m6-with-poster2:after{
+    background-image: url('/assets/media/media_mazda/2do/Mazda Bild und Video/BILD/m6/Video_02.jpg');
+}
+.not-playing.cx30-with-poster0:after{
+    background-image: url('/assets/media/media_mazda/2do/CX-30_UPDATE.jpg');
+}
+.not-playing.cx30-with-poster1:after{
+    background-image: url('/assets/media/media_mazda/2do/Mazda Bild und Video/BILD/cx30/video_01.jpg');
+}
+.not-playing.cx30-with-poster2:after{
+    background-image: url('/assets/media/media_mazda/2do/Mazda Bild und Video/BILD/cx30/Video_02.jpg');
+}
+.not-playing.cx5-with-poster0:after{
+    background-image: url('/assets/media/media_mazda/2do/CX-5_UPDATE.jpg');
+}
+.not-playing.cx5-with-poster1:after{
+    background-image: url('/assets/media/media_mazda/2do/Mazda Bild und Video/BILD/cx5/video_01.jpg');
+}
+.not-playing.mx5-with-poster0:after{
+    background-image: url('/assets/media/media_mazda/2do/Mazda Bild und Video/BILD/mx5/video_01.jpg');
+}
+.not-playing.mx5-with-poster1:after{
+    background-image: url('/assets/media/media_mazda/2do/Mazda Bild und Video/BILD/mx5/Video_02.jpg');
+}
+
+.not-playing.cx60-with-poster0:after {
+    background-image: url('/assets/media/media_mazda/2do/Mazda CX-60/video/01_video_preview.jpg');
+}
+
+.not-playing.cx60-with-poster1:after {
+    background-image: url('/assets/media/media_mazda/2do/Mazda CX-60/video/02_video_preview.jpg');
+}
+
+.not-playing.cx60-with-poster2:after {
+    background-image: url('/assets/media/media_mazda/2do/Mazda CX-60/video/03_video_preview.jpg');
+}
+.not-playing.cx60-with-poster3:after {
+    background-image: url('/assets/media/media_mazda/2do/Mazda CX-60/video/04_video_preview.jpg');
+}
+.not-playing.cx60-with-poster4:after {
+    background-image: url('/assets/media/media_mazda/2do/Mazda CX-60/video/05_video_preview.jpg');
+}
+.not-playing.cx60-with-poster5:after {
+    background-image: url('/assets/media/media_mazda/2do/Mazda CX-60/video/06_video_preview.jpg');
+}
+.not-playing.cx60-with-poster6:after {
+    background-image: url('/assets/media/media_mazda/2do/Mazda CX-60/video/07_video_preview.jpg');
+}
+.not-playing.cx60-with-poster7:after {
+    background-image: url('/assets/media/media_mazda/2do/Mazda CX-60/video/08_video_preview.jpg');
+}
+
+/* ignis */
+.not-playing.ignis-with-poster0:after {
+    background-image: url('/assets/media/media_mazda/2do/Suzuki Video/Ignis/video_preview_01.jpg');
+}
+.not-playing.ignis-with-poster1:after {
+    background-image: url('/assets/media/media_mazda/2do/Suzuki Video/Ignis/video_preview_02.jpg');
+}
+.not-playing.ignis-with-poster2:after {
+    background-image: url('/assets/media/media_mazda/2do/Suzuki Video/Ignis/video_preview_03.jpg');
+}
+
+/* Jimny */
+.not-playing.jimny-with-poster0:after {
+    background-image: url('/assets/media/media_mazda/2do/Suzuki Video/Jimny/video_preview_01.jpg');
+}
+.not-playing.jimny-with-poster1:after {
+    background-image: url('/assets/media/media_mazda/2do/Suzuki Video/Jimny/video_preview_02.jpg');
+}
+
+/* Suzuki Swace */
+.not-playing.swace-with-poster0:after {
+    background-image: url('/assets/media/media_mazda/2do/Suzuki Video/Swace/video_preview_01.jpg');
+}
+
+/* swift */
+.not-playing.swift-with-poster0:after {
+    background-image: url('/assets/media/media_mazda/2do/Suzuki Video/Swift/video_preview_01.jpg');
+}
+.not-playing.swift-with-poster1:after {
+    background-image: url('/assets/media/media_mazda/2do/Suzuki Video/Swift/video_preview_02.jpg');
+}
+.not-playing.swift-with-poster2:after {
+    background-image: url('/assets/media/media_mazda/2do/Suzuki Video/Swift/video_preview_03.jpg');
+}
+
+/* swift sport */
+.not-playing.sport-with-poster0:after {
+    background-image: url('/assets/media/media_mazda/2do/Suzuki Video/Swift Sport/video_preview_01.jpg');
+}
+.not-playing.sport-with-poster1:after {
+    background-image: url('/assets/media/media_mazda/2do/Suzuki Video/Swift Sport/video_preview_02.jpg');
+}
+.not-playing.sport-with-poster2:after {
+    background-image: url('/assets/media/media_mazda/2do/Suzuki Video/Swift Sport/video_preview_03.jpg');
+}
+.not-playing.sport-with-poster3:after {
+    background-image: url('/assets/media/media_mazda/2do/Suzuki Video/Swift Sport/video_preview_04.jpg');
+}
+.not-playing.sport-with-poster4:after {
+    background-image: url('/assets/media/media_mazda/2do/Suzuki Video/Swift Sport/video_preview_05.jpg');
+}
+.not-playing.sport-with-poster5:after {
+    background-image: url('/assets/media/media_mazda/2do/Suzuki Video/Swift Sport/video_preview_06.jpg');
+}
+
+/* cross */
+.not-playing.cross-with-poster0:after {
+    background-image: url('/assets/media/media_mazda/2do/Suzuki Video/S-Cross/video_preview_01.jpg');
+}
+.not-playing.cross-with-poster1:after {
+    background-image: url('/assets/media/media_mazda/2do/Suzuki Video/S-Cross/video_preview_02.jpg');
+}
+
+/* vitara */
+.not-playing.vitara-with-poster0:after {
+    background-image: url('/assets/media/media_mazda/2do/Suzuki Video/Vitara/video_preview_01.jpg');
+}
+.not-playing.vitara-with-poster1:after {
+    background-image: url('/assets/media/media_mazda/2do/Suzuki Video/Vitara/video_preview_02.jpg');
+}
+.not-playing.vitara-with-poster2:after {
+    background-image: url('/assets/media/media_mazda/2do/Suzuki Video/Vitara/video_preview_03.jpg');
+}
+.not-playing.vitara-with-poster3:after {
+    background-image: url('/assets/media/media_mazda/2do/Suzuki Video/Vitara/video_preview_04.jpg');
+}
+.not-playing.vitara-with-poster4:after {
+    background-image: url('/assets/media/media_mazda/2do/Suzuki Video/Vitara/video_preview_05.jpg');
+}
+.not-playing.vitara-with-poster5:after {
+    background-image: url('/assets/media/media_mazda/2do/Suzuki Video/Vitara/video_preview_06.jpg');
+}
+.not-playing.vitara-with-poster6:after {
+    background-image: url('/assets/media/media_mazda/2do/Suzuki Video/Vitara/video_preview_07.jpg');
+}
+
+
+.media-pink-block {
+    align-items: center;
+    justify-content: center!important;
+    margin-bottom: 2rem!important;
+}
+.media-pink-block .block-inner {
+    cursor: pointer;
+}
+input[name="brand"],
+input[name="brand_item"] {
+    display: none!important;
+}
+.select_border {
+    border: 1px solid #c2063a;
+}
+.brand .marka_img {
+    margin: 15px;
+}

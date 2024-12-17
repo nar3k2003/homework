@@ -1,0 +1,174 @@
+$(function () {
+    $('.slider1').slick({
+        dots: true,
+        infinite: true,
+        speed: 1200,
+        adaptiveHeight: true,
+        autoplay: true,
+        autoplaySpeed: 5000,
+        arrows: true,
+    });
+
+    $('.carousel').slick({
+        dots: true,
+        arrows: false,
+        infinite: true,
+        slidesToShow: 3,
+        slidesToScroll: 3,
+        autoplay: false,
+        autoplaySpeed: 2000,
+        responsive: [
+            {
+                breakpoint: 992,
+                settings: {
+                    slidesToShow: 1,
+                    slidesToScroll: 1
+                }
+            }
+        ]
+    });
+
+    let brand_item = $('.medien__auto.active .medien__auto-title').data('title').toLowerCase();
+    appendVideos(brand_item);
+    appendImages(brand_item);
+    showPresse(brand_item);
+    appendForums(brand_item);
+    appendTestDrives(brand_item);
+
+    $('.medien__auto').on('click', function(){
+        if (!$(this).hasClass('active')) {
+            $('.medien__auto').removeClass('active');
+            $(this).addClass('active');
+
+            let brand_item = $('.medien__auto-title', this).data('title').toLowerCase();
+            appendVideos(brand_item);
+            appendImages(brand_item);
+            showPresse(brand_item);
+            appendForums(brand_item);
+            appendTestDrives(brand_item);
+        }
+    });
+
+    $('.medien__item .btn').on('click', function(){
+        if (!$(this).hasClass('active')) {
+            $('.medien__item .btn').removeClass('active');
+            $(this).addClass('active');
+
+            let target = $(this).data('target');
+            $('.medien__result-item').hide();
+            if (target == 'photos' && $(window).width() <= 767) {
+                $('.medien__'+target).css('display', 'flex');
+            }
+            else {
+                $('.medien__'+target).show();
+            }
+        }
+    });
+
+    $(document).on('click', '.not-playing', function(){
+        var v_item = $(this);
+        var vid = v_item.find('video');
+        v_item.removeClass('not-playing');
+        v_item.find('img').hide();
+        vid.attr('controls',true);
+        vid.trigger('play');
+    });
+});
+
+function appendVideos(e) {
+    $('.medien__videos .medien__result-wrapper').html('');
+    if(e != 'mg5' && e != undefined) {
+        var srcs = eval(e + '_v');
+        for (var i = 0; i < srcs.length; i++) {
+            $('.medien__videos .medien__result-wrapper').append('<div class="'+e+'-with-poster'+i+' media-item c-video not-playing"><video src="'+srcs[i]+'"></video><button class="play-bottom" ><img src="assets/templates/mazda/mazda30/play-button.png" alt="play-button"></button></div>');
+        }
+        if (srcs.length === 0) $('.medien__videos .medien__result-wrapper').html('<p>Keine Resultate gefunden</p>')
+    }
+    else {
+        $('.medien__videos .medien__result-wrapper').html('<p>Keine Resultate gefunden</p>')
+    }
+}
+
+function appendImages(e) {
+    $('.medien__photos').html('');
+    if (e != undefined) {
+        var srcs = eval(e + '_g');
+        var srcs1 = eval(e + '_g1');
+        var index = 1;
+        for (var i = 0; i < srcs1.length; i++) {
+            var img_url = "'"+srcs[i]+"'";
+            var img_url1 = "'"+srcs[i]+"'";
+            if(i>=8) {
+                $('.medien__photos').append('<div class="medien__photos-item medien__photos-item'+index+'"><a class="img-'+index+'" style="display:none;" data-fancybox="group" href="'+srcs1[i]+'"></a></div>');
+            }
+            else {
+                $('.medien__photos').append('<div class="medien__photos-item medien__photos-item'+index+'"><a data-thumb="'+img_url1+'" data-fancybox="group" class="img-'+index+'" style="background-image:url('+img_url+')" href="'+srcs1[i]+'"><img src="assets/media/eye.png" alt="eye"></a></div>');
+            }
+            index++;
+        }
+        if (srcs1.length === 0) $('.medien__photos').html('<p>Keine Resultate gefunden</p>');
+    } else {
+        $('.medien__photos').html('<p>Keine Resultate gefunden</p>');
+    }
+}
+
+function showPresse(e) {
+    switch(e) {
+        case 'mg4': car_title = 'MG 4'; break;
+        case 'zs': car_title = 'MG ZS'; break;
+        case 'marvel': car_title = 'MG MARVEL R'; break;
+        case 'mg5': car_title = 'MG 5'; break;
+        case 'm2': car_title = 'Mazda 2'; break;
+        case 'm3': car_title = 'Mazda 3'; break;
+        case 'm6': car_title = 'Mazda 6'; break;
+        case 'mx30': car_title = 'Mazda MX 30'; break;
+        case 'cx30': car_title = 'Mazda CX 30'; break;
+        case 'cx3': car_title = 'Mazda CX-3'; break;
+        case 'cx5': car_title = 'Mazda CX 5'; break;
+        case 'cx60': car_title = 'Mazda CX 60'; break;
+        case 'ignis': car_title = 'Suzuki Ignis'; break;
+        case 'swace': car_title = 'Suzuki Swace'; break;
+        case 'swift': car_title = 'Suzuki Swift'; break;
+        case 'sport': car_title = 'Suzuki Sport'; break;
+        case 'jimny': car_title = 'Suzuki Jimny'; break;
+        case 'cross': car_title = 'Suzuki SX4 S-Cross'; break;
+        case 'vitara': car_title = 'Suzuki Vitara'; break;
+        case 'across': car_title = 'Suzuki Across'; break;
+        case 'm2H': car_title = 'M2 Hybrid'; break;
+        case 'mx5': car_title = 'Mazda MX 5';
+    }
+    
+    var title = $('h6:contains("'+car_title+'")');
+    $('.medien__presse .all-medias .media-item').addClass('d-none');
+    title.each(function() {
+        $(this).parent().removeClass('d-none');
+    });
+};
+
+function appendForums(e) {
+    $('.medien__forum .medien__result-wrapper').html('');
+    if(e != undefined) {
+        var srcs = eval(e + '_f');
+        for (var i = 0; i < srcs.length; i++) {
+            $('.medien__forum .medien__result-wrapper').append('<div class="'+e+'-with-poster'+i+' media-item c-video not-playing"><video src="'+srcs[i]+'"></video><button class="play-bottom" ><img src="assets/templates/mazda/mazda30/play-button.png" alt="play-button"></button></div>');
+        }
+        if (srcs.length === 0) $('.medien__forum .medien__result-wrapper').html('<p>Keine Resultate gefunden</p>');
+    }
+    else {
+        $('.medien__forum .medien__result-wrapper').html('<p>Keine Resultate gefunden</p>')
+    }
+}
+
+function appendTestDrives(e) {
+    $('.medien__test-drive .medien__result-wrapper').html('');
+    if(e != undefined) {
+        var srcs = eval(e + '_td');
+        for (var i = 0; i < srcs.length; i++) {
+            $('.medien__test-drive .medien__result-wrapper').append('<div class="'+e+'-with-poster'+i+' media-item c-video not-playing"><video src="'+srcs[i]+'"></video><button class="play-bottom" ><img src="assets/templates/mazda/mazda30/play-button.png" alt="play-button"></button></div>');
+        }
+        if (srcs.length === 0) $('.medien__test-drive .medien__result-wrapper').html('<p>Keine Resultate gefunden</p>');
+    }
+    else {
+        $('.medien__test-drive .medien__result-wrapper').html('<p>Keine Resultate gefunden</p>');
+    }
+}

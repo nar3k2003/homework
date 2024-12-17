@@ -1,0 +1,192 @@
+let calendar_m = document.querySelector('.calendar-m')
+
+const month_m_names = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember']
+
+const year_m_names = ['2023', '2024', '2025', '2026', '2027', '2028', '2029', '2030', '2031', '2032', '2033']
+
+isLeapyear_m = (year_m) => {
+    return (year_m % 4 === 0 && year_m % 100 !== 0 && year_m % 400 !== 0) || (year_m % 100 === 0 && year_m % 400 === 0)
+}
+
+getFebDays = (year_m) => {
+    return isLeapyear_m(year_m) ? 29 : 28
+}
+
+generatecalendarN = (month_m, year_m) => {
+    let calendar_m_days = calendar_m.querySelector('.calendar-m-days')
+    let calendar_m_header_year_m = calendar_m.querySelector('#year-m')
+
+    let days_of_month_m = [31, getFebDays(year_m), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
+    calendar_m_days.innerHTML = ''
+
+    let currDateN = new Date()
+    if (!month_m && month_m != 0) month_m = currDateN.getMonth()
+    if (!year_m) year_m = currDateN.getFullYear()
+
+    if (month_m < currDateN.getMonth() && year_m == currDateN.getFullYear()) {
+        month_m = currDateN.getMonth();
+    }
+
+    // +14 days
+    let dayFuture = 0;
+    let moveToNextMonth = false;
+
+    if (month_m == currDateN.getMonth() && year_m == currDateN.getFullYear()) {
+        if (currDateN.getDate()+14 > days_of_month_m[currDateN.getMonth()]) {
+            moveToNextMonth = true;
+            dayFuture = currDateN.getDate()+14 - days_of_month_m[currDateN.getMonth()]
+        }
+        else {
+            dayFuture = currDateN.getDate()+14;
+        }
+    }
+
+    // check available days
+    let first_day_m = new Date(year_m, month_m, 1);
+    let daysAvailable_m = false;
+    for (let i = 1; i <= days_of_month_m[month_m] + first_day_m.getDay() - 1; i++) {
+        if ((i!=2 && i!=4 && i!=9 && i!=11 && i!=16 && i!=18 && i!=23 && i!=25 && i!=30 && i!=32) || (i - first_day_m.getDay() + 1 <= dayFuture) || (month_m < currDateN.getMonth() && year_m <= currDateN.getFullYear()) || moveToNextMonth) {
+            //
+        } else {
+            daysAvailable_m = true;
+            break;
+        }
+    }
+
+    if (!daysAvailable_m) {
+        if (month_m === 11) {
+            month_m = 0;
+            year_m = currDateN.getFullYear() + 1;
+        }
+        else {
+            month_m += 1;
+        }
+    }
+    // end check
+
+    let curr_month_m = `${month_m_names[month_m]}`
+
+    month_m_picker_text.innerHTML = curr_month_m
+    calendar_m_header_year_m.innerHTML = year_m
+
+    // get first day of month-m
+
+    first_day_m = new Date(year_m, month_m, 1);
+    let classD = '';
+    for (let i = 1; i <= days_of_month_m[month_m] + first_day_m.getDay() - 1; i++) {
+        let day = '<div></div>';
+        // holidays 17.07 - 28.07                
+        if (curr_month_m == 'Januar') {
+            if ((i != 9 && i != 11 && i != 16 && i != 18 && i != 23 && i != 25 && i != 30 && i != 32) || (i - first_day_m.getDay() + 1 <= dayFuture) || (month_m < currDateN.getMonth() && year_m <= currDateN.getFullYear())) {
+                classD = 'disabled';
+            } else {
+                classD = '';
+            }
+        } 
+        else if (curr_month_m == 'Dezember') {
+            if ((i != 9 && i != 11 && i != 18) || (i - first_day_m.getDay() + 1 <= dayFuture) || (month_m < currDateN.getMonth() && year_m <= currDateN.getFullYear())) {
+                classD = 'disabled';
+            } else {
+                classD = '';
+            }
+        }
+        else {
+            if ((i!=2 && i!=4 && i!=9 && i!=11 && i!=16 && i!=18 && i!=23 && i!=25 && i!=30 && i!=32) || (i - first_day_m.getDay() + 1 <= dayFuture) || (month_m < currDateN.getMonth() && year_m <= currDateN.getFullYear())) {
+                classD = 'disabled';
+            } else {
+                classD = '';
+            }
+        }
+
+        if (i >= first_day_m.getDay()) {
+            let dN = i - first_day_m.getDay() + 1;
+            let arr_datas = leasing_selected_datas.split(',');
+            arr_datas.forEach(function (item) {
+                if (month_m_names[month_m] == item.split(" ")[1] && dN == item.split(" ")[0] && year_m == item.split(" ")[2]) {
+                    classD = 'disabled';
+                }
+            });
+            day = '<div class="calendar-m-day-hover ' + classD + '" onclick="calendarDateChangeN($(this))">' + dN + '<span></span>'
+                + '<span></span><span></span><span></span></div>';
+            if (i - first_day_m.getDay() + 1 === currDateN.getDate() && year_m === currDateN.getFullYear() && month_m === currDateN.getMonth()) {
+                day = '<div class="calendar-m-day-hover ' + classD + '" onclick="calendar-mDateChange($(this))">' + dN + '<span></span>'
+                    + '<span></span><span></span><span></span></div>';
+            }
+
+        }
+        $(".calendar-m-days").append(day);
+    }
+}
+
+let month_m_list = calendar_m.querySelector('.month-m-list');
+
+month_m_names.forEach((e, index) => {
+    let month_m = document.createElement('div')
+    month_m.innerHTML = `<div data-month-m="${index}">${e}</div>`
+    month_m.querySelector('div').onclick = () => {
+        month_m_list.classList.remove('show')
+        curr_month_m.value = index
+        generatecalendarN(index, $('#year-m').text())
+    }
+    month_m_list.appendChild(month_m)
+});
+
+let year_m_list = calendar_m.querySelector('.year-m-list')
+
+year_m_names.forEach((e, index) => {
+    let year_m = document.createElement('div')
+    year_m.innerHTML = `<div data-month-m="${index}">${e}</div>`
+    year_m.querySelector('div').onclick = () => {
+        year_m_list.classList.remove('show')
+        curr_year_m.value = index
+        generatecalendarN(curr_month_m.value, year_m_names[index])
+    }
+    year_m_list.appendChild(year_m)
+})
+
+month_m_picker = calendar_m.querySelector('#month-m-picker')
+year_m_picker = calendar_m.querySelector('#year-m-picker')
+month_m_picker_text = calendar_m.querySelector('#month-m-picker-text')
+
+month_m_picker.onclick = () => {
+    month_m_list.classList.add('show')
+}
+
+year_m_picker.onclick = () => {
+    year_m_list.classList.add('show')
+    //generatecalendarN(curr_month_m.value, curr_year_m.value)
+}
+currDateN = new Date()
+
+if (currDateN.getMonth() != '7' || currDateN.getFullYear() != '2022') {
+    curr_month_m = { value: currDateN.getMonth() };
+} else {
+    curr_month_m = { value: '8' };
+}
+let curr_year_m = { value: currDateN.getFullYear() }
+
+generatecalendarN(curr_month_m.value, curr_year_m.value)
+
+
+function calendarDateChangeN(el) {
+    if (!$(el).hasClass('disabled')) {
+        $(".calendar-m-day-hover").removeClass('curr-date');
+        $(el).addClass('curr-date');
+    }
+
+    let dateSelected = $(".calendar-m-days .curr-date").html().split("<span>")[0] + " " + $("#month-m-picker-text").html() + " " + $("#year-m").html();
+    $.ajax({
+        type: "post",
+        url: "/ajax/lease-redemption/freeTimeCheck.php",
+        data: { dateSelected },
+        dataType: "html",
+        beforeSend: function () {
+            $('.lease-redemption-time-m__loader').show();
+        },
+        success: function (response) {
+            $('.lease-redemption-time-m__loader').hide();
+            $('select[name="lease-redemption-time-m"]').html(response);
+        }
+    });
+}

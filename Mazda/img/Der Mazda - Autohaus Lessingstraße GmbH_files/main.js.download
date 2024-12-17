@@ -1,0 +1,3243 @@
+$(document).ready(function () {
+    if (window.location.href.indexOf("#life") > -1) {
+        openMxWithMazdaSpecial();
+    }
+});
+
+(function ($) {
+    $.fn.inputFilter = function (inputFilter) {
+        return this.on("input keydown keyup mousedown mouseup select contextmenu drop", function () {
+            if (inputFilter(this.value)) {
+                this.oldValue = this.value;
+                this.oldSelectionStart = this.selectionStart;
+                this.oldSelectionEnd = this.selectionEnd;
+            } else if (this.hasOwnProperty("oldValue")) {
+                this.value = this.oldValue;
+                this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+            } else {
+                this.value = "";
+            }
+        });
+    };
+}(jQuery));
+
+function sl5SlideToForm() {
+    $('.sl5').slick({
+        slidesToShow: 3,
+        dots: false,
+        infinite: true,
+        speed: 300,
+        adaptiveHeight: true,
+        autoplay: false,
+        autoplaySpeed: 5000,
+        arrows: true,
+        lazyLoad: 'progressive',
+        slidesToScroll: 3,
+        responsive: [{
+            breakpoint: 992,
+            settings: {
+                slidesToShow: 2,
+                slidesToScroll: 2
+            }
+        },
+        {
+            breakpoint: 576,
+            settings: {
+                slidesToShow: 1,
+                slidesToScroll: 1
+            }
+        }]
+    });
+}
+
+function setListTimelines(elem, hour, date) {
+    let html = '',
+        nowDate = new Date(),
+        nowDateStr = nowDate.getDate() + '.' + (nowDate.getMonth() + 1) + '.' + nowDate.getFullYear(),
+        dateStr = date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear();
+
+    if (nowDateStr == dateStr) {
+        $('.' + elem + ' option').each(function () {
+            let optionHour = parseInt($(this).data('h'));
+
+            if (optionHour > hour) {
+                let thisVal = $(this).val(),
+                    thisH = $(this).data('h');
+                html += '<option value="' + thisVal + '" data-h="' + thisH + '">' + thisVal + '</option>';
+            }
+        });
+    }
+    else {
+        html = $('.' + elem).html();
+    }
+
+    return html;
+}
+
+function setTimelinesConsultation(date) {
+    let hour = new Date().getHours(),
+        html = '',
+        ob = $('#timeFieldConsultation');
+
+    if (date.getDay() === 6) {
+        html = setListTimelines('consultationTimeShort', hour, date);
+        ob.removeClass('full').addClass('short');
+    }
+    else {
+        html = setListTimelines('consultationTimeFull', hour, date);
+        ob.removeClass('short').addClass('full');
+    }
+
+    ob.html(html);
+}
+
+function focusedImg() {
+    $('._1Odgr > img').each(function (i, elem) {
+        let img = $(this)[0];
+        if (img !== undefined) {
+            let focused = new imageFocus.FocusedImage(img);
+        }
+    });
+
+    if ($(window).width() > 1199) {
+        $('._1Odgr_response > img').each(function (i, elem) {
+            let img = $(this)[0];
+            if (img !== undefined) {
+                let focused = new imageFocus.FocusedImage(img);
+            }
+        });
+    }
+    else {
+        setTimeout(function () {
+            $('._1Odgr_response > img').each(function (i, elem) {
+                let h = $(this).height(),
+                    h2 = Math.round(h / 2);
+                $(this).css({ 'position': 'relative', 'top': '50%', 'marginTop': '-' + h2 + 'px' });
+            });
+        }, 500);
+    }
+}
+
+function send_contact_form() {
+    var data = {};
+    data.form = '[FORM] Kontakt Formular [/FORM]';
+
+    data.lastname = $('input[name=lastname]').val()
+    data.phone = $('input[name=phone]').val()
+    data.email = $('input[name=email]').val()
+    data.perm = $('input[name=permission]').is(':checked') ? 'true' : 'false'
+    data.perm_call = $('input[name=explicitCallPermission]').is(':checked') ? 'true' : 'false'
+    data.perm_email = $('input[name=explicitEmailPermission]').is(':checked') ? 'true' : 'false'
+    data.message = $('textarea[name=message]').val()
+
+
+    $('span#givePermission').removeClass('error')
+    $('#contactdealer_firstname').removeClass('error')
+    $('#contactdealer_lastname').removeClass('error')
+    $('#contactdealer_phone').removeClass('error')
+    $('#contactdealer_email').removeClass('error')
+    var has_error = false
+    $('input').removeClass('error');
+    if (data.perm == 'false') {
+        $('span#givePermission').addClass('error')
+        has_error = true
+    }
+    /*if (!data.firstname) {
+        $('#contactdealer_firstname').addClass('error')
+        has_error = true
+    }*/
+    if (!data.lastname) {
+        $('#contactdealer_lastname').addClass('error')
+        has_error = true
+    }
+    if (!data.phone) {
+        $('#contactdealer_phone').addClass('error')
+        has_error = true
+    }
+    if (!data.email) {
+        $('#contactdealer_email').addClass('error')
+        has_error = true
+    }
+
+    if (has_error) {
+        $([document.documentElement, document.body]).animate({
+            scrollTop: $("#dealer-contact-form").offset().top
+        }, 500);
+    } else {
+        $('#send_form_btn')
+            .addClass('sending')
+            .prop('disabled', true);
+
+        $.post('ajax/contactForm.php', data, function (r) {
+            $('#send_form_btn')
+                .removeClass('sending')
+                .prop('disabled', false);
+            $('#contactdealer').hide();
+            $('.form-success').show();
+            $([document.documentElement, document.body]).animate({
+                scrollTop: $("#dealer-contact-form").offset().top
+            }, 500);
+        });
+    }
+}
+
+function resizeIframe(obj) {
+    setTimeout(function () {
+        obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 100 + 'px';
+    }, 3000);
+}
+
+function standortDot() {
+    var currentSlide = $('.slider_standort').slick('slickCurrentSlide');
+    $('._1P9XX>li').removeClass('_3rC0O')
+    $($('._1P9XX>li')[currentSlide]).addClass('_3rC0O');
+}
+
+function sendProbe() {
+    $('.modal_err').hide();
+    $('#react-tabs-11 ._1gLTa').hide();
+    $('#react-tabs-11 ._1rDAj').hide();
+    $('#react-tabs-11 input').parent().removeClass('pNGbI');
+    $('#react-tabs-11 select').parent().parent().removeClass('_3103y');
+
+    var has_err = false;
+
+    var data = {
+        'type': $('#react-tabs-11 [name=type]').val(),
+        'model': $('#react-tabs-11 [name=model]').val(),
+        'title': $('#react-tabs-11 [name=title]').val(),
+        'firstName': $('#react-tabs-11 [name=firstName]').val(),
+        'lastName': $('#react-tabs-11 [name=lastName]').val(),
+        'street': $('#react-tabs-11 [name=street]').val(),
+        'houseNumber': $('#react-tabs-11 [name=houseNumber]').val(),
+        'postalCode': $('#react-tabs-11 [name=postalCode]').val(),
+        'city': $('#react-tabs-11 [name=city]').val(),
+        'email': $('#react-tabs-11 [name=email]').val(),
+        'telephone': $('#react-tabs-11 [name=telephone]').val(),
+        'emailOptIn': $('#react-tabs-11 [name=emailOptIn]').is(':checked') ? 'true' : 'false',
+        'telephoneOptIn': $('#react-tabs-11 [name=telephoneOptIn]').is(':checked') ? 'true' : 'false',
+    }
+
+    if (!data.type) {
+        $('#react-tabs-11 [name=type]').parent().parent().addClass('_3103y')
+        $('#react-tabs-11 [name=type]').parent().siblings('._1gLTa').show()
+        has_err = true;
+    }
+    if (!data.model) {
+        $('#react-tabs-11 [name=model]').parent().parent().addClass('_3103y')
+        $('#react-tabs-11 [name=model]').parent().siblings('._1gLTa').show()
+        has_err = true;
+    }
+    if (!data.title) {
+        $('#react-tabs-11 [name=title]').parent().parent().addClass('_3103y')
+        $('#react-tabs-11 [name=title]').parent().siblings('._1gLTa').show()
+        has_err = true;
+    }
+
+    if (!data.firstName) {
+        $('#react-tabs-11 [name=firstName]').parent().addClass('pNGbI')
+        $('#react-tabs-11 [name=firstName]').siblings('._1rDAj').show()
+        has_err = true;
+    }
+    if (!data.lastName) {
+        $('#react-tabs-11 [name=lastName]').parent().addClass('pNGbI')
+        $('#react-tabs-11 [name=lastName]').siblings('._1rDAj').show()
+        has_err = true;
+    }
+    if (!data.email) {
+        $('#react-tabs-11 [name=email]').parent().addClass('pNGbI')
+        $('#react-tabs-11 [name=email]').siblings('._1rDAj').show()
+        has_err = true;
+    }
+
+    if (!has_err) {
+        $.post('?id=50', data, function (r) {
+            console.log(r)
+        })
+    } else {
+        $('.modal_err').show()
+    }
+}
+
+function sendWorkshop() {
+    $('#react-tabs-9 input,select').parent().removeClass('pNGbI')
+    $('#react-tabs-9 [name=title]').parent().parent().removeClass('_3103y')
+    $('#react-tabs-9 ._1rDAj').hide()
+    $('#react-tabs-9 ._2Gk3B').hide()
+    $('#react-tabs-9 ._1gLTa').hide()
+
+    $('.modal_err').hide()
+
+    var has_err = false;
+    var data = {
+        'vehicleModel': $('#react-tabs-9 [name=vehicleModel]').val(),
+        'vin': $('#react-tabs-9 [name=vin]').val(),
+        'mileage': $('#react-tabs-9 [name=mileage]').val(),
+        'mileage': $('#react-tabs-9 [name=mileage]').val(),
+        'vehicleLicensePlate': $('#react-tabs-9 [name=vehicleLicensePlate]').val(),
+        'serviceTypeRegular': $('#react-tabs-9 [name=serviceTypeRegular]').is(':checked') ? 'true' : 'false',
+        'serviceTypeOther': $('#react-tabs-9 [name=serviceTypeOther]').is(':checked') ? 'true' : 'false',
+        'remarks': $('#react-tabs-9 [name=remarks]').val(),
+        'date': $('#react-tabs-9 [name=date]').val(),
+        'time-visit': $('#react-tabs-9 [name=time-visit]:checked').val(),
+        'title': $('#react-tabs-9 [name=title]').val(),
+        'firstName': $('#react-tabs-9 [name=firstName]').val(),
+        'lastName': $('#react-tabs-9 [name=lastName]').val(),
+        'street': $('#react-tabs-9 [name=street]').val(),
+        'houseNumber': $('#react-tabs-9 [name=houseNumber]').val(),
+        'postcode': $('#react-tabs-9 [name=postcode]').val(),
+        'city': $('#react-tabs-9 [name=city]').val(),
+        'email': $('#react-tabs-9 [name=email]').val(),
+        'mobilePhoneNumber': $('#react-tabs-9 [name=mobilePhoneNumber]').val(),
+        'emailOptIn': $('#react-tabs-9 [name=emailOptIn]').is(':checked') ? 'true' : 'false',
+        'telephoneOptIn': $('#react-tabs-9 [name=telephoneOptIn]').is(':checked') ? 'true' : 'false',
+    }
+    if (!data.vin) {
+        $('#react-tabs-9 [name=vin]').parent().addClass('pNGbI')
+        $('#react-tabs-9 [name=vin]').siblings('._1rDAj').show()
+        has_err = true;
+    }
+    if (!data.firstName) {
+        $('#react-tabs-9 [name=firstName]').parent().addClass('pNGbI')
+        $('#react-tabs-9 [name=firstName]').siblings('._1rDAj').show()
+        has_err = true;
+    }
+    if (!data.lastName) {
+        $('#react-tabs-9 [name=lastName]').parent().addClass('pNGbI')
+        $('#react-tabs-9 [name=lastName]').siblings('._1rDAj').show()
+        has_err = true;
+    }
+    if (!data.email) {
+        $('#react-tabs-9 [name=email]').parent().addClass('pNGbI')
+        $('#react-tabs-9 [name=email]').siblings('._1rDAj').show()
+        has_err = true;
+    }
+    if (!data.vehicleLicensePlate) {
+        $('#react-tabs-9 [name=vehicleLicensePlate]').parent().addClass('pNGbI')
+        $('#react-tabs-9 [name=vehicleLicensePlate]').siblings('._1rDAj').show()
+        has_err = true;
+    }
+    if (!data.title) {
+        $('#react-tabs-9 [name=title]').parent().parent().addClass('_3103y')
+        $('#react-tabs-9 [name=title]').parent().siblings('._1gLTa').show()
+        has_err = true;
+    }
+    if (data.serviceTypeRegular == 'false' && data.serviceTypeOther == 'false') {
+        $('#react-tabs-9 ._2Gk3B').show()
+        has_err = true;
+    }
+    if (!has_err) {
+        //	console.log(data)
+        $.post('?id=50', data, function (r) {
+            console.log(r)
+        })
+    } else {
+        $('.modal_err').show()
+    }
+
+}
+
+function openTestdrive() {
+    $('#modal_testdrive').fadeIn();
+    $('html').css({
+        'overflow': 'hidden'
+    });
+}
+
+function openVip() {
+    $('#modal_contact').fadeIn()
+    $('html').css({
+        'overflow': 'hidden'
+    })
+    $('#contacttabs li')[3].click()
+}
+
+function openProbe() {
+    $('#modal_contact').fadeIn()
+    $('html').css({
+        'overflow': 'hidden'
+    })
+    $('#contacttabs li')[1].click()
+}
+
+function openTermin() {
+    $('#modal_contact').fadeIn()
+    $('html').css({
+        'overflow': 'hidden'
+    })
+    $('#contacttabs li')[0].click()
+}
+
+function openContact() {
+    $('#modal_contact').fadeIn()
+    $('html').css({
+        'overflow': 'hidden'
+    })
+    $('#contacttabs li')[0].click()
+}
+
+function openContact2() {
+    $('#modal_contact2').fadeIn();
+    $('html').css({
+        'overflow': 'hidden'
+    });
+}
+
+function openConsultationAppointment() {
+    $("#modal_contact_header").attr('style','display:block');
+    $('#modal_consultation_appointment').modal('show');
+    $(".modalContactFormTab2").attr('style','display:none');
+    $(".modalContactFormTab3").attr('style','display:none');
+    $(".modalContactFormTab4").attr('style','display:none');
+
+    $('html').css({
+        'overflow': 'hidden'
+    });
+}
+function setVideo(poster, el) {
+    let video = document.getElementById('videoMx');
+    let source = document.getElementById('sourceMx');
+    video.pause();
+    video.poster = poster;
+    source.src = '/' + el;
+    video.load();
+}
+function openMxSpecial() {
+    $('#modal_mx_special').fadeIn();
+    $('html').css({
+        'overflow': 'hidden'
+    });
+}
+function openMxWithMazdaSpecial() {
+    $('#modal_mx_mazda_special').fadeIn();
+    $('html').css({
+        'overflow': 'hidden'
+    });
+}
+
+function openKontaktFormularBase() {
+    $('#modal_kontaktformular_base').fadeIn();
+    $('html').css({
+        'overflow': 'hidden'
+    });
+}
+
+function slidedMenu(elem) {
+    elem.siblings('._3BWAB').removeClass('_33MoC')
+    elem.addClass('_33MoC')
+    var scale = parseFloat((elem.width() + 64) / 100).toFixed(2);
+    var offset = Math.ceil(elem.offset().left - elem.parent().offset().left);
+
+    elem.siblings('._1mlMu').children('._2-BE_').css({
+        'transform': 'translateX(' + offset + 'px) scaleX(' + scale + ')'
+    })
+
+    $('.react-tabs__tab-panel').hide();
+    //resetAccessoriesFields();
+    $('#' + elem.attr('aria-controls')).show();
+}
+
+function slidedMenu2(elem) {
+    elem.siblings('._3BWAB').removeClass('_33MoC')
+    elem.addClass('_33MoC')
+    var scale = parseFloat((elem.width() + 64) / 100).toFixed(2);
+    var offset = Math.ceil(elem.offset().left - elem.parent().offset().left);
+
+    elem.siblings('._1mlMu').children('._2-BE_').css({
+        'transform': 'translateX(' + offset + 'px) scaleX(' + scale + ')'
+    })
+
+    $('.react-tabs__tab-panel').hide();
+    $('#' + elem.attr('aria-controls')).show();
+
+    $('.slider2, .slider3, .slider4, .slider5').filter('.slick-initialized').slick('unslick');
+
+    if (elem.attr('aria-controls') == 'react-tabs-1') {
+        $('.slider2').slick({
+            dots: true,
+            infinite: true,
+            speed: 1200,
+            adaptiveHeight: true,
+            autoplay: true,
+            autoplaySpeed: 5000,
+            arrows: false,
+        });
+    }
+
+    if (elem.attr('aria-controls') == 'react-tabs-3') {
+        $('.slider3').slick({
+            dots: true,
+            infinite: true,
+            speed: 1200,
+            adaptiveHeight: true,
+            autoplay: true,
+            autoplaySpeed: 5000,
+            arrows: false,
+        });
+    }
+
+    if (elem.attr('aria-controls') == 'react-tabs-5') {
+        $('.slider4').slick({
+            dots: true,
+            infinite: true,
+            speed: 1200,
+            adaptiveHeight: true,
+            autoplay: true,
+            autoplaySpeed: 5000,
+            arrows: false,
+        });
+    }
+
+    if (elem.attr('aria-controls') == 'react-tabs-7') {
+        $('.slider5').slick({
+            dots: true,
+            infinite: true,
+            speed: 1200,
+            adaptiveHeight: true,
+            autoplay: true,
+            autoplaySpeed: 5000,
+            arrows: false,
+        });
+    }
+
+    focusedImg();
+}
+
+function runApi(step = 1) {
+    let brand = $('.carPurchase__input_1').val(),
+        year = $('.carPurchase__select_3').val(),
+        month = $('.carPurchase__select_4').val(),
+        klm = $('.carPurchase__input_5').val(),
+        model = '',
+        equipments = '';
+
+    switch (step) {
+        case 1:
+            $('.carPurchase__itemContent-api-1').removeClass('d-none');
+            $.ajax({
+                url: '/ajax/carPurchase-api2.php',
+                dataType: 'html',
+                type: 'post',
+                data: { brand, year, month, klm, step },
+                beforeSend: function () {
+                    $('html').css('overflow', 'hidden');
+                    $('body').append('<div id="over"><div class="over-content-wrapper"><div class="over-content"><img src="assets/templates/mazda/img/Spinner-1s-200px-white.svg" alt=""><div>Bitte warten Sie</div></div></div></div>');
+                    $('#over').show();
+                },
+                success: function (data) {
+                    $('html').removeAttr('style');
+                    $('#over').remove();
+                    $('.modell_api').html(data);
+                }
+            });
+            break;
+        case 2:
+            $('.carPurchase__itemContent-api-1').addClass('d-none');
+            $('.carPurchase__itemContent-api-2').removeClass('d-none');
+            $('.modelslist_api').html('<option value="-">-</option>');
+            model = $('.modell_api').val();
+            step = 2;
+
+            $.ajax({
+                url: '/ajax/carPurchase-api2.php',
+                dataType: 'json',
+                type: 'post',
+                data: { brand, year, month, klm, model, step },
+                beforeSend: function () {
+                    $('html').css('overflow', 'hidden');
+                    $('body').append('<div id="over"><div class="over-content-wrapper"><div class="over-content"><img src="assets/templates/mazda/img/Spinner-1s-200px-white.svg" alt=""><div>Bitte warten Sie</div></div></div></div>');
+                    $('#over').show();
+                },
+                success: function (data) {
+                    $('html').removeAttr('style');
+                    $('#over').remove();
+                    $('.type_api').html(data.type);
+                    $('.listWrapper').html(data.list);
+                }
+            });
+            break;
+        case 3:
+            $('.carPurchase__itemContent-api-2').addClass('d-none');
+            $('.carPurchase__itemContent-api-3').removeClass('d-none');
+            model = $('.modell_api').val();
+            type = $('.type_api').val();
+            modelslist = $('.modelslist_api').val();
+            step = 3;
+
+            $.ajax({
+                url: '/ajax/carPurchase-api2.php',
+                dataType: 'html',
+                type: 'post',
+                data: { brand, year, month, klm, model, type, modelslist, step },
+                beforeSend: function () {
+                    $('html').css('overflow', 'hidden');
+                    $('body').append('<div id="over"><div class="over-content-wrapper"><div class="over-content"><img src="assets/templates/mazda/img/Spinner-1s-200px-white.svg" alt=""><div>Bitte warten Sie</div></div></div></div>');
+                    $('#over').show();
+                },
+                success: function (data) {
+                    $('html').removeAttr('style');
+                    $('#over').remove();
+
+                    $('.carPurchase__itemContent-api-3 .form-group').html(data);
+
+                    /* let title = data.TradeInTitle;
+                    let msg = data.TradeInMessage;
+
+                    $('.final-message__title').text(title);
+                    $('.final-message__text').html(msg);
+
+                    $('.carPurchase__inputPrice').val(data.TradeInPrice);
+                    $('.carPurchase__inputPrice1').val(data.TradeInPrice1);
+                    $('.carPurchase__inputPrice2').val(data.TradeInPrice2); */
+
+                    //nextStep();
+                }
+            });
+            break;
+        case 4:
+            $('.carPurchase__itemContent-api-3 .form-group .text-danger').remove();
+            model = $('.modell_api').val();
+            type = $('.type_api').val();
+            modelslist = $('.modelslist_api').val();
+            step = 4;
+
+            $('.carPurchase__itemContent-api-3 input[type="checkbox"]:checked').each(function () {
+                equipments += $(this).val() + ',';
+            });
+            if (equipments) equipments = equipments.slice(0, -1);
+
+            $.ajax({
+                url: '/ajax/carPurchase-api2.php',
+                dataType: 'json',
+                type: 'post',
+                data: { brand, year, month, klm, model, type, modelslist, equipments, step },
+                beforeSend: function () {
+                    $('html').css('overflow', 'hidden');
+                    $('body').append('<div id="over"><div class="over-content-wrapper"><div class="over-content"><img src="assets/templates/mazda/img/Spinner-1s-200px-white.svg" alt=""><div>Bitte warten Sie</div></div></div></div>');
+                    $('#over').show();
+                },
+                success: function (data) {
+                    $('html').removeAttr('style');
+                    $('#over').remove();
+
+                    if (data.status == 'ok') {
+                        $('.carPurchase__itemContent-api-3').addClass('d-none');
+
+                        let title = data.TradeInTitle;
+                        let msg = data.TradeInMessage;
+
+                        $('.final-message__title').text(title);
+                        $('.final-message__text').html(msg);
+
+                        $('.carPurchase__inputPrice').val(data.TradeInPrice);
+                        $('.carPurchase__inputPrice1').val(data.TradeInPrice1);
+                        $('.carPurchase__inputPrice2').val(data.TradeInPrice2);
+                        $('.carPurchase__modelNameStr').val(data.modelNameStr);
+
+                        nextStep();
+                    }
+                    else {
+                        $('.carPurchase__itemContent-api-3 .form-group').append(data.error_message);
+                    }
+                }
+            });
+            break;
+    }
+}
+
+function nextStep(value, api = 0) {
+    if (value) {
+        if (value.length > 30) value = value.slice(0, 30) + '...';
+        if (api) {
+            runApi();
+        }
+        else {
+            $('.carPurchase__itemContent-api').removeClass('er-form').addClass('d-none');
+        }
+        $('#list-tab .active').text(value).addClass('inscribed').next().removeClass('disabled').trigger('click');
+    }
+    else {
+        $('#list-tab .active').addClass('inscribed').next().removeClass('disabled').trigger('click');
+    }
+}
+
+function clearCarPurchase() {
+    //step 1
+    $('.carPurchase__input_1').val('');
+    $('.carPurchase__brandItem').removeClass('set');
+    $('.carPurchase__brands_temp').html('');
+    $('.carPurchase__brands_base').show();
+
+    //step 2
+    $('.carPurchase__input_2').val('');
+
+    //step 3
+    $('.carPurchase__select_3').val('');
+    $('.carPurchase__select_4').val('');
+
+    //step 4
+    $('.carPurchase__input_5').val('');
+
+    //step 5, step 6
+    $('.carPurchase input[type="radio"]').prop('checked', false);
+
+    //step 7
+    $('.carPurchase__textarea_7').val('');
+
+    //step 8
+    $('.carPurchase__select_8').val('');
+
+    //step 9
+    $('.carPurchase__input_9').val('');
+
+    //step 10
+    $('.carPurchase__inputName, .carPurchase__inputEmail, .carPurchase__inputPhone, .carPurchase__inputText').val('');
+
+    //all
+    $('#list-tab .list-group-item').each(function () {
+        let title = $(this).data('val');
+        $(this).text(title);
+    });
+    $('#list-tab .list-group-item').removeClass('inscribed active show').addClass('disabled');
+    //$('#list-tab .list-group-item:first-child').removeClass('disabled').tab('show');
+
+    //add
+    $('#list-contacts').removeClass('active show');
+    $('#final-message').addClass('active show');
+}
+
+function initMap() {
+    gMap.map = new google.maps.Map(
+        document.getElementById('gmap_over'), {
+        disableDefaultUI: !0,
+        zoomControl: gMap.props.zoomControl,
+        draggable: gMap.props.draggable,
+        styles: [{
+            featureType: "poi",
+            stylers: [{
+                visibility: "off"
+            }]
+        }],
+        zoom: gMap.props.zoom
+    }
+    ),
+        gMap.bounds = new google.maps.LatLngBounds,
+        gMap.props.markers.forEach(function (e) {
+            return gMap.setMarker(e)
+        }),
+        gMap.center(),
+        google.maps.event.addDomListener(window, "resize", gMap.center)
+
+    gMap2 = {}
+    gMap2.map = new google.maps.Map(
+        document.getElementById('footer_map_oberhausen'), {
+        disableDefaultUI: !0,
+        zoomControl: false,
+        draggable: false,
+        styles: [{
+            featureType: "poi",
+            stylers: [{
+                visibility: "off"
+            }]
+        }],
+        zoom: gMap.props.zoom
+    }
+    ),
+        gMap2.bounds = new google.maps.LatLngBounds
+    var t = {
+        lat: gMap.props.markers[0].lat,
+        lng: gMap.props.markers[0].lng
+    }
+    new google.maps.Marker({
+        map: gMap2.map,
+        position: t,
+        icon: d[gMap.props.markers[0].type]
+    }),
+        gMap2.bounds.extend(t)
+    gMap2.map.setCenter({
+        lat: t.lat,
+        lng: t.lng
+    })
+}
+
+function setFavorite(ob) {
+    ob.addClass('selected');
+    let carId = ob.data('carid'),
+        count = Number($('#favorites-sticky span').text()) + 1;
+    $('#favorites-sticky span').text(count);
+    $('.pre-favorites-sticky').show();
+
+    let cookieFavorite = Cookies.get('cookieFavorite');
+    let ar;
+    if (!cookieFavorite) {
+        ar = [carId];
+    } else {
+        ar = JSON.parse(cookieFavorite);
+        ar.push(carId);
+    }
+
+    Cookies.set('cookieFavorite', JSON.stringify(ar), {
+        expires: 365,
+        path: '/'
+    });
+}
+
+function unsetFavorite(ob) {
+    ob.removeClass('selected');
+    let carId = ob.data('carid'),
+        count = Number($('#favorites-sticky span').text()) - 1;
+    $('#favorites-sticky span').text(count);
+
+    let cookieFavorite = Cookies.get('cookieFavorite');
+    let ar = JSON.parse(cookieFavorite);
+    ar.splice(ar.indexOf(carId), 1);
+    if (count === 0) {
+        $('.pre-favorites-sticky').hide();
+        Cookies.remove('cookieFavorite');
+    } else {
+        Cookies.set('cookieFavorite', JSON.stringify(ar), {
+            expires: 365,
+            path: '/'
+        });
+    }
+}
+
+function showFavorite() {
+    let cookieFavorite = Cookies.get('cookieFavorite');
+    if (cookieFavorite) {
+        let count = JSON.parse(cookieFavorite).length;
+        $('#favorites-sticky span').text(count);
+        $('.pre-favorites-sticky').show();
+    }
+}
+
+function showCompareCounter(action = '') {
+    let count = Number($('.compare-button:eq(0) .comparison-total').text());
+    if (action) {
+        if (action === 'add' && count < 6) {
+            count += 1;
+        } else if (action === 'remove') {
+            count -= 1;
+        }
+    }
+    $('#compare-sticky span').text(count);
+    if ($('.compare-button').length > 0 && count > 1) {
+        $('.pre-compare-sticky').show();
+    } else {
+        $('.pre-compare-sticky').hide();
+    }
+}
+
+function resetAccessoriesFields() {
+    if ($('.accessoriesList #react-tabs-1 .col2 ._2sg34').length == 0) {
+        $('.accessoriesList #react-tabs-1 .col2 select').before('<div class="_2sg34">Produktionsdatum wählen...</div>');
+    }
+
+    $('.accessoriesList #react-tabs-1 .col3 ._2Kfn0').addClass('_3z1Vn');
+    if ($('.accessoriesList #react-tabs-1 .col3 ._2sg34').length == 0) {
+        $('.accessoriesList #react-tabs-1 .col3 select').before('<div class="_2sg34">Kategorie wählen...</div>');
+    }
+
+    if ($('.accessoriesList #react-tabs-3 .col3 ._2sg34').length == 0) {
+        $('.accessoriesList #react-tabs-3 .col3 select').before('<div class="_2sg34">Kategorie wählen...</div>');
+    }
+    $('.accessoriesList #react-tabs-1 ._3u6xl').html('<div class="_3fmiy">Bitte wählen Sie ein Produktionsdatum</div>');
+    $('.accessoriesList #react-tabs-3 ._3u6xl').html('<div class="_3fmiy">Bitte wählen Sie eine Kategorie</div>');
+}
+
+function slideToForm() {
+    $('html, body').animate({
+        scrollTop: $('#test-drive-form').offset().top
+    }, 1000);
+}
+
+function carPurchaseFinish(data) {
+    $('html').removeAttr('style');
+    $('#over').remove();
+
+    if (data.status != 'ok') {
+        $('.final-message__title').text('Ein Fehler ist aufgetreten.');
+        $('.final-message__text').html('Laden Sie die Seite neu und versuchen Sie es erneut.');
+    }
+
+    clearCarPurchase();
+}
+
+function setTimelinesTestDrive(date) {
+    let ob = $('.testdrive__time');
+    ob.html($('.testdrive__sourceTimeFull').html()).val('8:00');
+    ob.removeClass('short').addClass('full');
+
+    if (date.getDay() === 6) {
+        if (ob.hasClass('full')) {
+            ob.html($('.testdrive__sourceTimeShort').html()).val('8:00');
+            ob.removeClass('full').addClass('short');
+        }
+    }
+}
+
+function setTimelinesMx(date) {
+    let ob = $('.modal_mx_special__time');
+    ob.html($('.modal_mx_special__sourceTimeFull').html()).val('08:00');
+    ob.removeClass('short').addClass('full');
+
+    if (date.getDay() === 6) {
+        if (ob.hasClass('full')) {
+            ob.html($('.modal_mx_special__sourceTimeShort').html()).val('09:00');
+            ob.removeClass('full').addClass('short');
+        }
+    }
+}
+
+function createApi2ListGroup() {
+    if (!$('#list-api2-list').length) {
+        $('#list-klm-list').after('<a class="list-group-item list-group-item-action disabled" id="list-api2-list" data-toggle="list" href="#list-api2" role="tab" aria-controls="api2" data-val="Modell Auswählen">Modell Auswählen</a>');
+        $('.carPurchase__itemContent-api-2').addClass('d-none');
+        $('.carPurchase__itemContent-api-1').removeClass('d-none');
+    }
+}
+
+var i18n = {
+    previousMonth: 'Vormonat',
+    nextMonth: 'Nächster Monat',
+    months: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober',
+        'November', 'Dezember'
+    ],
+    weekdays: ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'],
+    weekdaysShort: ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa']
+};
+
+$(function () {
+    let picker2 = new Pikaday({
+        field: document.getElementById('dateField2'),
+        firstDay: 1,
+        format: 'DD.MM.YYYY',
+        minDate: moment().add({
+            days: 2
+        }).toDate(),
+        maxDate: new Date(2023, 11, 31),
+        yearRange: 0,
+        disableDayFn: date => exceptionDate(date),
+        onSelect: function (date) {
+            setTimelinesTestDrive(date);
+        },
+        i18n: i18n
+    });
+
+    let pickerVip = new Pikaday({
+        field: document.getElementById('dateFieldVip'),
+        firstDay: 1,
+        format: 'DD.MM.YYYY',
+        minDate: moment().add({
+            days: 2
+        }).toDate(),
+        maxDate: new Date(2023, 11, 31),
+        yearRange: 0,
+        disableDayFn: date => exceptionDate(date),
+        onSelect: function (date) {
+            let ob = $('.vip-consultation__time');
+            if (date.getDay() === 6) {
+                if (ob.hasClass('full')) {
+                    ob.html($('.vip-consultation__time_short').html()).val('14:00');
+                    ob.removeClass('full').addClass('short');
+                }
+            } else {
+                if (ob.hasClass('short')) {
+                    ob.html($('.vip-consultation__time_full').html()).val('18:00');
+                    ob.removeClass('short').addClass('full');
+                }
+            }
+        },
+        i18n: i18n
+    });
+
+    let pickerVorDate = moment().add({ days: 7 }).toDate(),
+        pickerVor = new Pikaday({
+            field: document.getElementById('dateFieldVor'),
+            firstDay: 1,
+            format: 'DD.MM.YYYY',
+            maxDate: new Date(2023, 11, 31),
+            yearRange: 0,
+            minDate: pickerVorDate,
+            i18n: i18n
+        });
+    pickerVor.setDate(pickerVorDate);
+
+    //mx_special
+    let dateMxSpecial = new Pikaday({
+        field: document.getElementById('dateFrom'),
+        firstDay: 1,
+        format: 'DD.MM.YYYY',
+        minDate: moment().add({
+            days: 3
+        }).toDate(),
+        maxDate: new Date(2023, 11, 31),
+        yearRange: 0,
+        disableDayFn: date => exceptionDate(date),
+        onSelect: function (date) {
+            setTimelinesMx(date);
+        },
+        i18n: i18n
+    });
+
+    //kontaktformular base
+    let dateKontaktformular = new Pikaday({
+        field: document.getElementById('dateKontakt'),
+        firstDay: 1,
+        format: 'DD.MM.YYYY',
+        minDate: moment().add({
+            days: 3
+        }).toDate(),
+        maxDate: new Date(2023, 11, 31),
+        yearRange: 0,
+        disableDayFn: date => exceptionDate(date),
+        onSelect: function (date) {
+            setTimelinesMx(date);
+        },
+        i18n: i18n
+    });
+
+    /* zk.init(); */
+    $('._3bdBA').click(function () {
+        $('._13MWf').hide();
+        $('._3uCdm video').get(0).play();
+    })
+
+    var now = Date.now();
+    if ($("input[datepicker]").length != 0) {
+        $("input[datepicker]").datepicker({
+            startDate: now,
+            format: 'dd.mm.yyyy',
+            language: 'de-DE',
+            filter: function (date, view) {
+                if (date.getDay() === 0 && view === 'day') {
+                    return false; // Disable all Sundays, but still leave months/years, whose first day is a Sunday, enabled.
+                }
+            }
+        });
+    }
+
+
+    $('._2tlpd').on('change', function () {
+        $(this).siblings('._2sg34').text($(this).children('option:selected').text())
+    })
+
+    $('#contacttabs li').click(function () {
+        //	$(this).removeClass('_33MoC')
+        var elem = $(this);
+        slidedMenu(elem);
+        if ($(this).text() == 'VIP-Beratung') {
+            // Vip consultation
+            $('.vip-consultation__slider').filter('.slick-initialized').slick('unslick');
+            $('.vip-consultation__slider').slick({
+                infinite: true,
+                slidesToShow: 3,
+                slidesToScroll: 3,
+                responsive: [{
+                    breakpoint: 992,
+                    settings: {
+                        slidesToShow: 2,
+                        slidesToScroll: 2
+                    }
+                },
+                {
+                    breakpoint: 414,
+                    settings: {
+                        slidesToShow: 1,
+                        slidesToScroll: 1
+                    }
+                }]
+            });
+        }
+    });
+
+    $('#inspectiontabs li, #accessoriesTabs li, #modelinfotabs li').click(function () {
+        var elem = $(this);
+        slidedMenu(elem)
+    });
+
+    $('#highlights li').click(function () {
+        var elem = $(this);
+        slidedMenu2(elem)
+    });
+
+    $('#modal_contact ._7fdJb, #modal_contact button[name="Abbruch"]').click(function () {
+        $('#modal_contact').fadeOut();
+        $('html').css({
+            'overflow': 'auto'
+        });
+    });
+
+    $('#modal_contact2 ._7fdJb, #modal_contact2 button[name="Abbruch"]').click(function () {
+        $('#modal_contact2').fadeOut();
+        $('html').css({
+            'overflow': 'auto'
+        });
+    });
+
+    $('#modal_testdrive ._7fdJb, #modal_testdrive button[name="Abbruch"]').click(function (e) {
+        e.preventDefault();
+        $('#modal_testdrive').fadeOut();
+        $('html').css({
+            'overflow': 'auto'
+        });
+        /*setTimeout(() => {
+            $('#modal_testdrive .part1').show();
+            $('#modal_testdrive .part2').hide();
+            $('.e-date-models__item').removeClass('active');
+        }, 500);*/
+    });
+
+    $('#modal_consultation_appointment ._7fdJb, #modal_consultation_appointment button[name="Abbruch"]').click(function () {
+        $('#modal_consultation_appointment').modal('hide');
+        $('#modal_contact').fadeOut();
+        $('html').css({
+            'overflow': 'auto'
+        });
+    });
+
+    $('#modal_mx_special ._7fdJb, #modal_mx_special button[name="Abbruch"]').click(function () {
+        $('#modal_mx_special').fadeOut();
+        $('html').css({
+            'overflow': 'auto'
+        });
+    });
+    $('#modal_mx_mazda_special ._7fdJb, #modal_mx_mazda_special button[name="Abbruch"]').click(function () {
+        $('#modal_mx_mazda_special').fadeOut();
+        $('html').css({
+            'overflow': 'auto'
+        });
+    });
+    $('#modal_kontaktformular_base ._7fdJb, #modal_kontaktformular_base button[name="Abbruch"]').click(function () {
+        $('#modal_kontaktformular_base').fadeOut();
+        $('html').css({
+            'overflow': 'auto'
+        });
+    });
+
+    $('.o6elJ').click(function () {
+        $('#modal_contact').fadeIn()
+        $('html').css({
+            'overflow': 'hidden'
+        })
+        $('#contacttabs li')[0].click()
+    })
+    $('.CnG1w').click(function () {
+        let id = $(this).data('id')
+        $('.modal_probe[data-id=' + id + ']').fadeIn()
+        $('html').css({
+            'overflow': 'hidden'
+        })
+    })
+
+    $('.modal_probe ._7fdJb').click(function () {
+        $('.modal_probe').fadeOut()
+        $('html').css({
+            'overflow': 'auto'
+        })
+    })
+    $('.slider_standort').slick({
+        dots: true,
+        infinite: true,
+        speed: 300,
+        adaptiveHeight: false,
+        autoplay: false,
+        autoplaySpeed: 5000,
+        arrows: false,
+    });
+
+    $('.accessSlick').slick({
+        dots: false,
+        infinite: true,
+        speed: 300,
+        adaptiveHeight: false,
+        autoplay: false,
+        autoplaySpeed: 5000,
+        arrows: true,
+    });
+
+    $('.slider_probe').slick({
+        dots: true,
+        infinite: true,
+        speed: 300,
+        adaptiveHeight: false,
+        autoplay: false,
+        autoplaySpeed: 5000,
+        arrows: true,
+    });
+    $('._2ljhf').click(function () {
+        $('.slider_standort').slick('slickNext')
+        standortDot()
+    });
+    $('._3mR1F').click(function () {
+        $('.slider_standort').slick('slickPrev')
+        standortDot()
+    });
+    $('._1P9XX>li').click(function () {
+        //	console.log($(this).data('id'))
+        $('.slider_standort').slick('slickGoTo', $(this).data('id'))
+        standortDot()
+    });
+
+    $('._2FwRU li').click(function () {
+        $('._2diFe').addClass('_3zQdy')
+        $('._2diFe._1txkp').removeClass('_1txkp')
+        $('._2diFe._1txkp2').removeClass('_1txkp2')
+
+        if (!$(this).hasClass('i-yx-')) {
+            $('._2FwRU li').removeClass('i-yx-');
+            $(this).addClass('i-yx-');
+            $('.podMenu').length > 0 ? $('._2diFe[data-id=' + $(this).data('id') + ']').addClass('_1txkp2') : $('._2diFe[data-id=' + $(this).data('id') + ']').addClass('_1txkp');
+        } else {
+            $(this).removeClass('i-yx-')
+        }
+
+        $('._2diFe').removeClass('_3zQdy')
+    });
+
+    $('.wft_m').click(function () {
+        $('._2diFe._1txkp').removeClass('_1txkp');
+        $('._2diFe._1txkp2').removeClass('_1txkp2');
+        $('._3gZRO').removeClass('i-yx-');
+    });
+
+    $('li._3_Gx2._3qC_c').click(function () {
+        if ($('.z-eyI').hasClass('_1ALtx')) {
+            $('.z-eyI').removeClass('_1ALtx')
+            $('li._3_Gx2._3qC_c>span.tY7Cp._3Zajp').css({
+                'transform': 'rotate(180deg)'
+            }, 300)
+        } else {
+            $('.z-eyI').addClass('_1ALtx')
+            $('li._3_Gx2._3qC_c>span.tY7Cp._3Zajp').css({
+                'transform': 'rotate(0deg)'
+            }, 300)
+        }
+    })
+    $('._2M7Le').click(function () {
+        if ($('._2M7Le').hasClass('SIKk9')) {
+            $('._2M7Le').removeClass('SIKk9')
+            $('._27y9q').removeClass('_1hOXm');
+            $('._3nsGo_mob').show();
+            $('._1Qvfj ._3b_it').css('margin-top', '2.25rem');
+        } else {
+            $('._2M7Le').addClass('SIKk9')
+            $('._27y9q').addClass('_1hOXm');
+            $('._3nsGo_mob').hide();
+            $('._1Qvfj ._3b_it').css('margin-top', 0);
+        }
+    })
+    initMap();
+
+    //cookie agreement
+    let cookieAgreement = Cookies.get('cookieAgreement');
+    if (!cookieAgreement && window.location.hostname !== 'kia.al-auto.de') {
+        $("#modal_contact_header").attr("style",'display:block');
+        $('html').addClass('modal-open').append('<div id="over"></div>');
+        $('#over, .cookie-agreement').fadeIn(600);
+    }
+
+    $('.btnCookieAgreement-go').click(function () {
+        $('#over, .cookie-agreement').fadeOut(600);
+
+        Cookies.set('cookieAgreement', '1', {
+            expires: 365,
+            path: '/'
+        });
+
+        setTimeout(function () {
+            $('html').removeClass('modal-open');
+            $('#over').remove();
+        }, 600);
+    });
+
+    //car purchase
+    $(document).on('click', '.carPurchase__more', function (e) {
+        e.preventDefault();
+        if (!$(this).hasClass('open')) {
+            $('.carPurchase__brands_hide').slideDown().css({
+                'display': 'flex'
+            });
+            $(this).addClass('open').html('Verstecken <i class="iconClose"></i>');
+        } else {
+            $('.carPurchase__brands_hide').slideUp();
+            $(this).removeClass('open').html('Alle anzeigen <i class="iconOpen"></i>');
+        }
+    });
+
+    $(document).on('click', '.carPurchase__brandItem', function () {
+        let brand = $(this).data('brand');
+
+        $('.carPurchase__brandItem').removeClass('set');
+        $(this).addClass('set');
+
+        $('.carPurchase__input_1').val(brand);
+        nextStep('Marke: ' + brand);
+    });
+
+    $(document).on('keyup', '.carPurchase__input_1', function (e) {
+        let valUpper = $(this).val().toUpperCase();
+        $('.carPurchase__brands_temp p').remove();
+
+        if (valUpper) {
+            $('.carPurchase__brands_base .carPurchase__brandItem').each(function () {
+                let dataBrand = $(this).data('brand');
+
+                if (dataBrand.toUpperCase().indexOf(valUpper) === 0) {
+                    //$(this).show();
+                    if ($('.carPurchase__brands_temp .carPurchase__brandItem[data-brand="' + dataBrand + '"]').length === 0) {
+                        $(this).clone().appendTo('.carPurchase__brands_temp');
+                    }
+                } else {
+                    //$(this).hide();
+                    $('.carPurchase__brands_temp .carPurchase__brandItem[data-brand="' + dataBrand + '"]').remove();
+                }
+            });
+
+            if ($('.carPurchase__brands_temp .carPurchase__brandItem').length === 0) {
+                $('.carPurchase__brands_temp').html('<p class="text-center">Für Ihre Anfrage wurden keine Ergebnisse gefunden :(</p>');
+            }
+
+            $('.carPurchase__brands_base').hide();
+            $('.carPurchase__brands_temp').show();
+        } else {
+            $('.carPurchase__brands_temp').hide().html('');
+            $('.carPurchase__brands_base').show();
+        }
+    });
+
+    // Step 2
+    $(document).on('click', '.carPurchase__btn_next1', function () {
+        let par = $('.carPurchase__input_2').parent();
+        par.removeClass('er-form');
+        $('.vin-error').remove();
+        $('.carPurchase__input_2').val($('.carPurchase__input_2').val().replace(/[^\w]/g, '').toUpperCase());
+        let number = $('.carPurchase__input_2').val();
+        if (!$('.carPurchase__btn_keine').hasClass('active')) {
+            if (number.length === 17) {
+                if (number.search('O') == -1 && number.search('Q') == -1 && number.search('I') == -1) {
+                    $('#list-api2-list').remove();
+                    nextStep('Fahrgestellnummer: ' + number);
+                }
+                else {
+                    par.addClass('er-form');
+                    par.after('<p class="text-danger vin-error">Die FIN-Nummer darf die Buchstaben I, O, Q nicht enthalten. Bitte korrigieren Sie Ihren Eintrag.</p>');
+                }
+            }
+            else {
+                par.addClass('er-form');
+            }
+        }
+        else {
+            $('.carPurchase__input_2').val('');
+            nextStep('Fahrgestellnummer: -');
+        }
+    });
+
+    // Step 3
+    $(document).on('click', '.carPurchase__btn_next2', function () {
+        let yearValue = $('.carPurchase__select_3').val(),
+            monthValue = $('.carPurchase__select_4').val(),
+            itogDate = monthValue + ' ' + yearValue,
+            par = $(this).parents('.carPurchase__itemContent');
+
+        $('.text-danger', par).addClass('d-none');
+
+        if (yearValue && monthValue)
+            nextStep('Erstzulassung: ' + itogDate);
+        else
+            $('.text-danger', par).removeClass('d-none');
+    });
+
+    // Step 4
+    $(document).on('keyup', '.carPurchase__input_5', function () {
+        $(this).val($(this).val().replace(/[^\d]/g, ''));
+    });
+
+    $(document).on('click', '.carPurchase__btn_next3', function () {
+        let klm = $('.carPurchase__input_5').val();
+        if (klm) {
+            $('.carPurchase__input_5').parent().removeClass('er-form');
+            let fin = $('.carPurchase__input_2').val(),
+                month = $('.carPurchase__select_4').val(),
+                year = $('.carPurchase__select_3').val(),
+                title = '',
+                msg = '',
+                api = $('.carPurchase__btn_keine').hasClass('active');
+
+            if (api) {
+                createApi2ListGroup();
+                nextStep('Km.: ' + klm);
+                //runApi();
+            }
+            else {
+                $.ajax({
+                    url: '/ajax/carPurchase-api.php',
+                    dataType: 'json',
+                    type: 'post',
+                    data: { fin, month, year, klm },
+                    beforeSend: function () {
+                        $('html').css('overflow', 'hidden');
+                        $('body').append('<div id="over"><div class="over-content-wrapper"><div class="over-content"><img src="assets/templates/mazda/img/Spinner-1s-200px-white.svg" alt=""><div>Bitte warten Sie</div></div></div></div>');
+                        $('#over').show();
+                    },
+                    success: function (data) {
+                        if (data.TradeInPrice == '-') {
+                            createApi2ListGroup();
+                            nextStep('Km.: ' + klm);
+                            runApi();
+                        }
+                        else {
+                            $('html').removeAttr('style');
+                            $('#over').remove();
+
+                            title = data.TradeInTitle;
+                            msg = data.TradeInMessage;
+
+                            $('.final-message__title').text(title);
+                            $('.final-message__text').html(msg);
+
+                            $('.carPurchase__inputPrice').val(data.TradeInPrice);
+                            $('.carPurchase__inputPrice1').val(data.TradeInPrice1);
+                            $('.carPurchase__inputPrice2').val(data.TradeInPrice2);
+
+                            nextStep('Km.: ' + klm);
+                        }
+                    }
+                });
+            }
+        } else {
+            $('.carPurchase__input_5').parent().addClass('er-form');
+        }
+    });
+
+    // Step 5
+    // and create request
+    $(document).on('click', '.carPurchase__btn_next4', function () {
+        let val = $('.carPurchase input[name="accident"]:checked').val(),
+            par = $(this).parents('.carPurchase__itemContent');
+
+        $('.text-danger', par).addClass('d-none');
+
+        if (val) {
+            nextStep('Schäden: ' + val);
+        }
+        else {
+            $('.text-danger', par).removeClass('d-none');
+        }
+    });
+
+    // Step 6
+    $(document).on('click', '.carPurchase__btn_next5', function () {
+        let val = $('.carPurchase input[name="book"]:checked').val(),
+            par = $(this).parents('.carPurchase__itemContent');
+
+        $('.text-danger', par).addClass('d-none');
+
+        if (val)
+            nextStep('Scheckheft: ' + val);
+        else
+            $('.text-danger', par).removeClass('d-none');
+    });
+
+    // Step 7
+    $(document).on('click', '.carPurchase__btn_next6', function () {
+        let spec = $('.carPurchase__textarea_7').val();
+        nextStep('Sonderausstattung: ' + spec);
+    });
+
+    // Step 8
+    $(document).on('click', '.carPurchase__btn_next7', function () {
+        let val = $('.carPurchase__select_8').val(),
+            par = $(this).parents('.carPurchase__itemContent');
+
+        $('.text-danger', par).addClass('d-none');
+
+        if (val)
+            nextStep('Anzahl der vorbesitzer: ' + val);
+        else
+            $('.text-danger', par).removeClass('d-none');
+    });
+
+    // Step 9
+    $(document).on('click', '.carPurchase__btn_next8', function () {
+        let price = $('.carPurchase__input_9').val();
+        if (price) {
+            $('.carPurchase__input_9').parent().removeClass('er-form');
+            let minPrice = $('.carPurchase__inputPrice1').val(),
+                maxPrice = $('.carPurchase__inputPrice2').val(),
+                priceNum = parseInt(price);
+
+            if (maxPrice && maxPrice != '-') {
+                console.log('price: ' + priceNum);
+                console.log('price min: ' + minPrice);
+                console.log('price max: ' + maxPrice);
+                if (priceNum > minPrice && priceNum < maxPrice) {
+                    console.log('v1');
+                    $('.carPurchase__inputPrice2').val(priceNum);
+                    maxPrice = priceNum.toLocaleString('de');
+                    $('.priceMaxApi').text(maxPrice);
+                }
+            }
+
+            nextStep('Preisvorstellung: ' + price);
+        } else {
+            $('.carPurchase__input_9').parent().addClass('er-form');
+        }
+    });
+
+    // Final
+    $(document).on('click', '.carPurchase__btn_go', function () {
+        $('.carPurchase input, .carPurchase textarea').removeClass('er-form');
+        $('.carPurchase__itemContent .text-danger').addClass('d-none');
+
+        let name = $('.carPurchase__inputName').val(),
+            email = $('.carPurchase__inputEmail').val(),
+            equipments = '',
+            re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+        if (!name || !email) {
+            !name ? $('.carPurchase__inputName').addClass('er-form') : '';
+            !email ? $('.carPurchase__inputEmail').addClass('er-form') : '';
+        } else {
+            if (!re.test(email)) {
+                $('.carPurchase__inputEmail').addClass('er-form');
+            } else {
+                if (!$('#consentCheckPurchase').is(':checked')) {
+                    $('.carPurchase__itemContent .text-danger').removeClass('d-none');
+                }
+                else {
+                    let formData = new FormData();
+                    formData.set('brand', $('.carPurchase__input_1').val());
+                    formData.set('fin', $('.carPurchase__input_2').val());
+                    formData.set('year', $('.carPurchase__select_3').val());
+                    formData.set('month', $('.carPurchase__select_4').val());
+                    formData.set('klm', $('.carPurchase__input_5').val());
+                    formData.set('accident', $('.carPurchase input[name="accident"]').val());
+                    formData.set('book', $('.carPurchase input[name="book"]').val());
+                    formData.set('spec', $('.carPurchase__textarea_7').val());
+                    formData.set('col', $('.carPurchase__select_8').val());
+                    formData.set('price', $('.carPurchase__input_9').val());
+                    formData.set('name', name);
+                    formData.set('email', email);
+                    formData.set('phone', $('.carPurchase__inputPhone').val());
+                    formData.set('text', $('.carPurchase__inputText').val());
+                    formData.set('TradeInPrice', $('.carPurchase__inputPrice').val());
+                    formData.set('TradeInPrice1', $('.carPurchase__inputPrice1').val());
+                    formData.set('TradeInPrice2', $('.carPurchase__inputPrice2').val());
+                    formData.set('modelNameStr', $('.carPurchase__modelNameStr').val());
+
+                    $('.carPurchase__itemContent-api-3 input[type="checkbox"]:checked').each(function () {
+                        let par = $(this).parent();
+                        equipments += $('._1iv4C', par).text() + '; ';
+                    });
+                    if (equipments) {
+                        equipments = equipments.slice(0, -2);
+                        equipments = equipments + '.';
+                    }
+
+                    formData.set('equipments', equipments);
+
+                    $.ajax({
+                        url: '/ajax/carPurchase.php',
+                        dataType: 'json',
+                        type: 'post',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        beforeSend: function () {
+                            $('html').css('overflow', 'hidden');
+                            $('body').append('<div id="over"><div class="over-content-wrapper"><div class="over-content"><img src="assets/templates/mazda/img/Spinner-1s-200px-white.svg" alt=""><div>Bitte warten Sie</div></div></div></div>');
+                            $('#over').show();
+                        },
+                        success: function (data) {
+                            if ($('.final-message__title').text() == '') {
+
+                                let intervalFunc = setInterval(() => {
+                                    if ($('.final-message__title').text() != '') {
+                                        carPurchaseFinish(data);
+                                        clearInterval(intervalFunc);
+                                    }
+                                }, 500);
+
+                            }
+                            else {
+                                carPurchaseFinish(data);
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    });
+
+    $(document).on('click', '.carPurchase__btn_prev', function () {
+        $('.carPurchase__inputWrap').removeClass('er-form');
+        $('#carPurchaseContent #list-tab .list-group-item.active').prev().click();
+    });
+
+    $(document).on('click', '#list-api2-list', function () {
+        if (!$(this).hasClass('disabled')) {
+            runApi();
+        }
+    });
+
+    $('.carPurchase__input_9').inputFilter(function (value) {
+        return /^\d*$/.test(value);    // Allow digits only, using a RegExp
+    });
+    // END
+
+
+    $('#dateField').mask('99.99.9999');
+
+    // Favorite
+    $(document).on('click', '.cars-list .favorite-button', function () {
+        let ob = $(this);
+        if (!ob.hasClass('selected')) {
+            setFavorite(ob);
+        } else {
+            unsetFavorite(ob);
+        }
+    });
+
+    showFavorite();
+
+    $('.vip-consultation__item').click(function () {
+        if (!$(this).hasClass('active')) {
+            $('.vip-consultation__item').removeClass('active');
+            $(this).addClass('active');
+            $('.vip-consultation__form').slideDown();
+        } else {
+            $(this).removeClass('active');
+            $('.vip-consultation__form').slideUp();
+        }
+    });
+
+    $('.vip-consultation select[name="brand"]').change(function () {
+        let curBrand = $(this).val();
+        $('.vip-consultation select[name="model"]').val('');
+        if (curBrand == '') {
+            $('.vip-consultation select[name="model"]').html('<option value="" selected="">Modell*</option>');
+        } else if (curBrand == 'Mazda') {
+            $('.vip-consultation select[name="model"]').html($('.vip-consultation_data-mazda').html());
+        } else {
+            $('.vip-consultation select[name="model"]').html($('.vip-consultation_data-suzuki').html());
+        }
+    });
+
+    $('.vip-consultation__btn').click(function () {
+        $('.vip-consultation select, .vip-consultation input[type="text"]').removeClass('er-form');
+        $('.modalContactFormTab4 .text-danger').addClass('d-none');
+        let brand = $('.vip-consultation select[name="brand"]').val(),
+            model = $('.vip-consultation select[name="model"]').val(),
+            name = $('.vip-consultation input[name="name"]').val(),
+            phone = $('.vip-consultation input[name="phone"]').val(),
+            email = $('.vip-consultation input[name="email"]').val(),
+            date = $('#dateFieldVip').val(),
+            time = $('.vip-consultation__time').val(),
+            re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+        if (!brand || !model || !name || !phone || !email || !date) {
+            !brand ? $('.vip-consultation select[name="brand"]').addClass('er-form') : '';
+            !model ? $('.vip-consultation select[name="model"]').addClass('er-form') : '';
+            !name ? $('.vip-consultation input[name="name"]').addClass('er-form') : '';
+            !phone ? $('.vip-consultation input[name="phone"]').addClass('er-form') : '';
+            !email ? $('.vip-consultation input[name="email"]').addClass('er-form') : '';
+            !date ? $('#dateFieldVip').addClass('er-form') : '';
+        } else {
+            if (!re.test(email)) {
+                $('.vip-consultation input[name="email"]').addClass('er-form');
+            } else {
+                if (!$('.modalContactFormTab4 #consentCheck4').is(':checked')) {
+                    $('.modalContactFormTab4 .text-danger').removeClass('d-none');
+                }
+                else {
+                    let formData = new FormData();
+                    formData.set('brand', brand);
+                    formData.set('model', model);
+                    formData.set('name', name);
+                    formData.set('phone', phone);
+                    formData.set('email', email);
+                    formData.set('date', date);
+                    formData.set('time', time);
+
+                    $.ajax({
+                        url: '/ajax/vipConsultation.php',
+                        dataType: 'text',
+                        type: 'post',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (data) {
+                            if (data == 'ok') {
+                                $('.vip-consultationModal .modal-title').text('Vielen Dank für Ihre Nachricht!');
+                                $('.vip-consultationModal .modal-body p').html('Vielen Dank. Ihre Anfrage wurde versendet <br>Wir werden uns in Kürze bei Ihnen melden.');
+
+                                /* $('.vip-consultation__item').removeClass('active');
+                                $('.vip-consultation__form').hide(); */
+                                $('.vip-consultation__form input[type="text"], .vip-consultation__form select').val('');
+                                $('.vip-consultation select[name="model"]').html('<option value="" selected="">Modell*</option>');
+                                $('.vip-consultation__time').val('18:00');
+
+                                $('#modal_contact').fadeOut();
+
+                                $('.vip-consultationModal').modal('show');
+                                $('.vip-consultationModal').on('hidden.bs.modal', function (e) {
+                                    $('html').css({
+                                        'overflow': 'auto'
+                                    });
+                                });
+                            } else {
+                                $('.vip-consultationModal .modal-title').text('Ein Fehler ist aufgetreten.');
+                                $('.vip-consultationModal .modal-body p').html('Versuchen Sie erneut, das Formular zu senden.');
+
+                                $('.vip-consultationModal').modal('show');
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    });
+
+
+    $('.backInCatalog').click(function (e) {
+        if (document.referrer != "") {
+            e.preventDefault();
+            window.history.back();
+        } else {
+            console.log('empty');
+
+        }
+        //console.log('histro')
+    });
+
+
+    $('.img-c-slider').slick({
+        arrows: false,
+        autoplaySpeed: 800,
+        pauseOnHover: false
+    });
+
+    $(document).on('mouseenter', '.caritem_list_el', (e) => {
+        $(e.currentTarget).find('.img-c-slider').slick('slickPlay');
+    });
+
+    $(document).on('mouseleave', '.caritem_list_el', (e) => {
+        $(e.currentTarget).find('.img-c-slider').slick('slickPause');
+    });
+
+    showCompareCounter();
+
+    $(document).on('click', '.comparison-link', function () {
+        let action = 'add';
+        if ($(this).hasClass('comparison-remove'))
+            action = 'remove';
+        showCompareCounter(action);
+    });
+
+    $('.car-main-info-btn').click(function () {
+        if (!$(this).hasClass('open')) {
+            $(this).addClass('open');
+            $('._3fLO-', this).html('Fahrzeugbeschreibung ausblenden <span>Fahrzeugbeschreibung ausblenden</span><span>Fahrzeugbeschreibung ausblenden</span>');
+            //$('.car-main-info').slideDown(400);
+            $('.car-main-info').removeClass('car-main-info__hide');
+        } else {
+            $(this).removeClass('open');
+            $('._3fLO-', this).html('Fahrzeugbeschreibung anzeigen <span>Fahrzeugbeschreibung anzeigen</span><span>Fahrzeugbeschreibung anzeigen</span>');
+            //$('.car-main-info').slideUp(400);
+            $('.car-main-info').addClass('car-main-info__hide');
+
+            setTimeout(() => {
+                let destination = $(this).offset().top - 100;
+                $('html, body').animate({
+                    scrollTop: destination
+                }, 1100);
+            }, 401);
+        }
+    });
+
+    $('.icon-star-close').click(function () {
+        $('.pre-favorites-sticky').hide();
+        $('#favorites-sticky span').text('0');
+        Cookies.remove('cookieFavorite');
+    });
+
+    $('.icon-compare-close').click(function () {
+        $('.pre-compare-sticky').hide();
+        $('#compare-sticky span').text('0');
+        Cookies.set('removeComparison', 'yes', {
+            expires: 365,
+            path: '/'
+        });
+    });
+
+    focusedImg();
+
+    //Accessories catalog
+    $('.accessoriesList select[name="currentYear"]').change(function () {
+        let par = $(this).parents('._3Uysk');
+        $('.col2 ._2sg34', par).remove();
+        $('select[name="currentYear"] option[value="PLACEHOLDER"]', par).remove();
+
+        $('.col3 ._2Kfn0', par).addClass('_3z1Vn');
+        $('select[name="currentCategory"]', par).prop('selectedIndex', 0).prop('disabled', true);
+
+        $('._3u6xl', par).html('<div class="_3G7rx"><div class="_3EQhu"><div></div></div><div>Ergebnisse laden</div></div>');
+
+        $.ajax({
+            url: 'ajax/accessoriesListCategories.php',
+            dataType: 'html',
+            type: 'post',
+            data: { id: $(this).val() },
+            success: function (data) {
+                $('select[name="currentCategory"]', par).html(data)
+                    .prepend('<option value="PLACEHOLDER" selected="" disabled="">Kategorie wählen...</option>')
+                    .prop('disabled', false);
+
+                if ($('.col3 ._2sg34', par).length == 0) {
+                    $('select[name="currentCategory"]', par).before('<div class="_2sg34">Kategorie wählen...</div>');
+                }
+
+                $('.col3 ._2Kfn0', par).removeClass('_3z1Vn');
+                $('._3u6xl', par).html('<div class="_3fmiy">Bitte wählen Sie eine Kategorie</div>');
+            }
+        });
+    });
+
+    $('.accessoriesList select[name="currentCategory"]').change(function () {
+        let par = $(this).parents('._3Uysk');
+        $('.col3 ._2sg34', par).remove();
+        $('select[name="currentCategory"] option[value="PLACEHOLDER"]', par).remove();
+
+        //$('.accessoriesList ._3u6xl').html('<div class="_3G7rx"><div class="_3EQhu"><div></div></div><div>Ergebnisse laden</div></div>');
+        let idCategory = $(this).val(),
+            idYear = $('select[name="currentYear"]', par).val(),
+            id = par.attr('id');
+
+        id == 'react-tabs-3' ? idYear = $('select[name="currentModel"]', par).val() : '';
+
+        $.ajax({
+            url: 'ajax/accessoriesListGoods.php',
+            dataType: 'html',
+            type: 'post',
+            data: { idYear, idCategory },
+            beforeSend: function () {
+                $('._3u6xl', par).css('opacity', '.3');
+            },
+            success: function (data) {
+                $('._3u6xl', par).removeAttr('style');
+                $('._3u6xl', par).html(data);
+            }
+        });
+    });
+
+    $('.accessoriesList select[name="currentModel"]').change(function () {
+        let idModel = $(this).val(),
+            par = $(this).parents('._3Uysk'),
+            id = par.attr('id');
+
+        resetAccessoriesFields();
+
+        if (id != 'react-tabs-3') {
+            $.ajax({
+                url: 'ajax/accessoriesList.php',
+                dataType: 'json',
+                type: 'post',
+                data: { idModel },
+                success: function (data) {
+                    $('select[name="currentYear"]', par).html(data.years).prop('selectedIndex', 0);
+                    $('select[name="currentCategory"]', par).html(data.types).prop('selectedIndex', 0);
+                }
+            });
+        }
+        else {
+            $('.col3 ._2Kfn0', par).addClass('_3z1Vn');
+            $('select[name="currentCategory"]', par).prop('selectedIndex', 0).prop('disabled', true);
+
+            $('._3u6xl', par).html('<div class="_3G7rx"><div class="_3EQhu"><div></div></div><div>Ergebnisse laden</div></div>');
+
+            $.ajax({
+                url: 'ajax/accessoriesListCategories.php',
+                dataType: 'html',
+                type: 'post',
+                data: { id: $(this).val() },
+                success: function (data) {
+                    $('select[name="currentCategory"]', par).html(data)
+                        .prepend('<option value="PLACEHOLDER" selected="" disabled="">Kategorie wählen...</option>')
+                        .prop('disabled', false);
+
+                    if ($('.col3 ._2sg34', par).length == 0) {
+                        $('select[name="currentCategory"]', par).before('<div class="_2sg34">Kategorie wählen...</div>');
+                    }
+
+                    $('.col3 ._2Kfn0', par).removeClass('_3z1Vn');
+                    $('._3u6xl', par).html('<div class="_3fmiy">Bitte wählen Sie eine Kategorie</div>');
+                }
+            });
+        }
+    });
+
+    $('.modalContactFormTab1 button[name="senderBtn"]').click(function () {
+        $('.modalContactFormTab1 input[type="text"]').removeClass('er-form');
+        $('.modalContactFormTab1 .text-danger').addClass('d-none');
+        let name = $('.modalContactFormTab1 input[name="name"]').val(),
+            phone = $('.modalContactFormTab1 input[name="phone"]').val(),
+            email = $('.modalContactFormTab1 input[name="email"]').val(),
+            message = $('.modalContactFormTab1 textarea[name="message"]').val(),
+            sMessage = $('.modalContactFormTab1 input[name="sMessage"]').val(),
+            re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if (!name || !phone || !email) {
+            !name ? $('.modalContactFormTab1 input[name="name"]').addClass('er-form') : '';
+            !phone ? $('.modalContactFormTab1 input[name="phone"]').addClass('er-form') : '';
+            !email ? $('.modalContactFormTab1 input[name="email"]').addClass('er-form') : '';
+        }
+        else {
+            if (!re.test(email)) {
+                $('.modalContactFormTab1 input[name="email"]').addClass('er-form');
+            } else {
+                if (!$('.modalContactFormTab1 #consentCheck1').is(':checked')) {
+                    $('.modalContactFormTab1 .text-danger').removeClass('d-none');
+                }
+                else {
+                    $.ajax({
+                        url: 'ajax/modalContactForm.php',
+                        dataType: 'text',
+                        type: 'post',
+                        data: { name, phone, email, message },
+                        success: function (data) {
+                            if (data == 'ok') {
+                                $('.appointmentModal .modal-title').text('Vielen Dank für Ihre Nachricht!');
+                                $('.appointmentModal .modal-body p').html('Ihre Anfrage wird in Kürze bearbeitet.');
+                                $('.modalContactFormTab1 input[type="text"], .modalContactFormTab1 textarea').val('');
+
+                                $('#modal_contact').fadeOut();
+                                $("#modal_contact_header").attr('style','display:block');
+                                $('.appointmentModal').modal('show');
+                                $('.appointmentModal').on('hidden.bs.modal', function (e) {
+                                    $('html').css({
+                                        'overflow': 'auto'
+                                    });
+                                });
+                            } else {
+                                $('.appointmentModal .modal-title').text('Ein Fehler ist aufgetreten.');
+                                $('.appointmentModal .modal-body p').html('Versuchen Sie erneut, das Formular zu senden.');
+
+                                $('.appointmentModal').modal('show');
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    });
+
+    $('#modal_contact2 button[name="senderBtn"]').click(function () {
+        $('#modal_contact2 input[type="text"]').removeClass('er-form');
+        let name = $('#modal_contact2 input[name="name"]').val(),
+            phone = $('#modal_contact2 input[name="phone"]').val(),
+            date = $('#modal_contact2 input[name="date"]').val(),
+            text = $('#modal_contact2 textarea[name="message"]').val();
+
+        if (!name || !phone || !date) {
+            !name ? $('#modal_contact2 input[name="name"]').addClass('er-form') : '';
+            !phone ? $('#modal_contact2 input[name="phone"]').addClass('er-form') : '';
+            !date ? $('#modal_contact2 input[name="date"]').addClass('er-form') : '';
+        }
+        else {
+            $.ajax({
+                url: 'ajax/modalVor-ort-service.php',
+                dataType: 'text',
+                type: 'post',
+                data: { name, phone, date, text },
+                success: function (data) {
+                    if (data == 'ok') {
+                        $('.appointmentModal .modal-title').text('Anfrage gesendet');
+                        $('.appointmentModal .modal-body p').html('Ihre Anfrage wird in Kürze bearbeitet.');
+                        $('#modal_contact2 input[name="name"], #modal_contact2 input[name="phone"], #modal_contact2 textarea').val('');
+
+                        $('#modal_contact2').fadeOut();
+
+                        $('.appointmentModal').modal('show');
+                        $('.appointmentModal').on('hidden.bs.modal', function (e) {
+                            $('html').css({
+                                'overflow': 'auto'
+                            });
+                        });
+                    } else {
+                        $('.appointmentModal .modal-title').text('Ein Fehler ist aufgetreten.');
+                        $('.appointmentModal .modal-body p').html('Versuchen Sie erneut, das Formular zu senden.');
+
+                        $('.appointmentModal').modal('show');
+                    }
+
+                    /* setTimeout(function () {
+                        $('.appointmentModal').modal('hide');
+                    }, 4000); */
+                }
+            });
+        }
+    });
+
+    $('.filter-button').click(function () {
+        $('.fmmMain #filterNav ul.hidden').toggle();
+    });
+
+    let w = $(window).width();
+    //console.log(w);
+
+    $(window).on('scroll', (e) => {
+        let width = $('html').width();
+        if (width > 767) {
+            $('header._1Qvfj ._2diFe').removeClass('_1txkp _1txkp2');
+            $('._3dqBR ._3gZRO').removeClass('i-yx-');
+        }
+
+        if ($('.podMenu').length > 0) {
+            let top = $('.podMenu').offset().top;
+
+            /* if ($(window).scrollTop() > top) {
+                $('.podMenu .mxp-SectionNavigation-section-navigation-244ae').addClass('mxp-SectionNavigation-is-sticky-I2KKC');
+            }
+            else {
+                $('.podMenu .mxp-SectionNavigation-section-navigation-244ae').removeClass('mxp-SectionNavigation-is-sticky-I2KKC');
+            } */
+        }
+    });
+
+    $('.modalContactFormTab3 button[name="senderBtn2"]').click(function () {
+        $('.modalContactFormTab3 input[type="text"], .modalContactFormTab3 select').removeClass('er-form');
+        $('.modalContactFormTab3 .text-danger').addClass('d-none');
+
+        let name = $('.modalContactFormTab3 input[name="name"]').val(),
+            phone = $('.modalContactFormTab3 input[name="phone"]').val(),
+            email = $('.modalContactFormTab3 input[name="email"]').val(),
+            date = $('.modalContactFormTab3 input[name="date"]').val(),
+            marka = $('.modalContactFormTab3 select[name="marke"]').val(),
+            model = $('.modalContactFormTab3 select[name="model"]').val(),
+            time = $('.modalContactFormTab3 select[name="time"]').val(),
+            message = $('.modalContactFormTab3 textarea[name="message"]').val(),
+            re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if (!marka || !model || !name || !phone || !date || !time) {
+            !marka ? $('.modalContactFormTab3 select[name="marke"]').addClass('er-form') : '';
+            !model ? $('.modalContactFormTab3 select[name="model"]').addClass('er-form') : '';
+            !name ? $('.modalContactFormTab3 input[name="name"]').addClass('er-form') : '';
+            !phone ? $('.modalContactFormTab3 input[name="phone"]').addClass('er-form') : '';
+            !date ? $('.modalContactFormTab3 input[name="date"]').addClass('er-form') : '';
+            !time ? $('.modalContactFormTab3 select[name="time"]').addClass('er-form') : '';
+        } else {
+            if (email && !re.test(email)) {
+                $('.modalContactFormTab3 input[name="email"]').addClass('er-form');
+            }
+            else {
+                if (!$('.modalContactFormTab3 #consentCheck3').is(':checked')) {
+                    $('.modalContactFormTab3 .text-danger').removeClass('d-none');
+                }
+                else {
+                    $.ajax({
+                        url: 'ajax/modalContactForm2.php',
+                        dataType: 'text',
+                        type: 'post',
+                        data: {
+                            name,
+                            phone,
+                            email,
+                            date,
+                            marka,
+                            model,
+                            time,
+                            message
+                        },
+                        success: function (data) {
+                            if (data == 'ok') {
+                                $('.appointmentModal .modal-title').text('Vielen Dank für Ihre Nachricht!');
+                                $('.appointmentModal .modal-body p').html('Ihre Anfrage wird in Kürze bearbeitet.');
+                                $('.modalContactFormTab3 input[type="text"], .modalContactFormTab3 input[type="email"], .modalContactFormTab3 textarea').val('');
+
+                                $('#modal_contact').fadeOut();
+                                $("#modal_contact_header").attr('style','display:block');
+
+                                $('.appointmentModal').modal('show');
+                                $('.appointmentModal').on('hidden.bs.modal', function (e) {
+                                    $('html').css({
+                                        'overflow': 'auto'
+                                    });
+                                });
+                            } else {
+                                $('.appointmentModal .modal-title').text('Ein Fehler ist aufgetreten.');
+                                $('.appointmentModal .modal-body p').html('Versuchen Sie erneut, das Formular zu senden.');
+
+                                $('.appointmentModal').modal('show');
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    });
+
+    $('.modalContactFormTab3 select[name="marke"]').on('change', function(){
+        let marka = $(this).val();
+        if (marka) {
+            $.ajax({
+                type: "post",
+                url: "ajax/probefahrt.php",
+                data: { marka },
+                dataType: "html",
+                beforeSend: function () {
+                },
+                success: function (response) {
+                    $('.modalContactFormTab3 select[name="model"]').html(response);
+                }
+            });
+        }
+        else {
+            $('.modalContactFormTab3 select[name="model"]').val('');
+        }
+    });
+
+    $('.ownership-models__td').click(function () {
+        if (!$(this).hasClass('active')) {
+            $('.ownership-models__td').removeClass('active');
+            $(this).addClass('active');
+            let id = $(this).data('id');
+            $('.ownership-models-content__item').fadeOut(200);
+            setTimeout(function () {
+                $('#' + id).fadeIn(200);
+            }, 200)
+        }
+    });
+
+    $('.sl6').slick({
+        slidesToShow: 2,
+        dots: false,
+        infinite: true,
+        speed: 300,
+        adaptiveHeight: true,
+        autoplay: false,
+        autoplaySpeed: 5000,
+        arrows: true,
+        lazyLoad: 'progressive',
+        slidesToScroll: 2,
+        responsive: [{
+            breakpoint: 992,
+            settings: {
+                slidesToShow: 1,
+                slidesToScroll: 1
+            }
+        },
+        {
+            breakpoint: 576,
+            settings: {
+                slidesToShow: 1,
+                slidesToScroll: 1
+            }
+        }]
+    });
+
+    $('.sl5').slick({
+        slidesToShow: 3,
+        dots: false,
+        infinite: true,
+        speed: 300,
+        adaptiveHeight: true,
+        autoplay: false,
+        autoplaySpeed: 5000,
+        arrows: true,
+        lazyLoad: 'progressive',
+        slidesToScroll: 3,
+        responsive: [{
+            breakpoint: 992,
+            settings: {
+                slidesToShow: 2,
+                slidesToScroll: 2
+            }
+        },
+        {
+            breakpoint: 576,
+            settings: {
+                slidesToShow: 1,
+                slidesToScroll: 1
+            }
+        }]
+    });
+
+    $('.sde-intro__navigation a').click(function (e) {
+        e.preventDefault();
+        let hash = $(this).attr('href');
+        $('html, body').animate({
+            scrollTop: $(hash).offset().top - 100
+        }, 800);
+    });
+
+    $(window).on('scroll', (e) => {
+        if ($('#stickyContainer').length > 0) {
+            if (($(window).scrollTop() > $('#stickyContainer').offset().top) &&
+                !$('#stickyContainer').hasClass('sticky')) {
+                $('#stickyContainer').removeClass('scroll');
+                $('#stickyContainer').addClass('sticky');
+            }
+            if (
+                ($('header._1Qvfj').height() > $(window).scrollTop()) &&
+                !$('#stickyContainer').hasClass('scroll')
+            ) {
+                $('#stickyContainer').addClass('scroll');
+                $('#stickyContainer').removeClass('sticky');
+            }
+
+            if ($(window).scrollTop() > $('footer').offset().top - $('#stickyContainer').height()) {
+                $('#stickyContainer').css({
+                    'top': -($(window).scrollTop() - ($('footer').offset().top - $('#stickyContainer').height() - 5))
+                });
+            } else {
+                $('#stickyContainer').css({
+                    'top': 0
+                });
+            }
+        }
+
+        if ($('.podMenu').length > 0) {
+            if (($(window).scrollTop() > $('.podMenuInner').offset().top)) {
+                $('.podMenuFixed').show();
+            }
+            else {
+                $('.podMenuFixed').hide();
+            }
+        }
+    });
+
+    $(document).on('click', '.accessoriesList ._3dGVu a', function (e) {
+        e.preventDefault();
+
+        let par = $(this).parents('.react-tabs__tab-panel'),
+            model = $.trim($('select[name="currentModel"]', par).val()),
+            year = $.trim($('select[name="currentYear"]', par).val()),
+            category = $.trim($('select[name="currentCategory"]', par).val()),
+            id = $.trim(par.attr('id'));
+
+        !year ? year = '' : '';
+        let ar = [model, year, category, id];
+        Cookies.set('accessories', JSON.stringify(ar), {
+            path: '/'
+        });
+
+        window.location.href = $(this).attr('href');
+    });
+
+    let cookieAccessories = Cookies.get('accessories');
+    if (cookieAccessories) {
+        let ar = JSON.parse(cookieAccessories),
+            par = '';
+        if (ar[0]) {
+            if (ar[3] == 'react-tabs-3') {
+                $('#react-tabs-2').click();
+                par = '#react-tabs-3';
+            }
+            else {
+                par = '#react-tabs-1';
+            }
+
+            $(par + ' .col2 ._2sg34').remove();
+            $(par + ' select[name="currentYear"] option[value="PLACEHOLDER"]').remove();
+
+            $(par + ' .col3 ._2Kfn0').removeClass('_3z1Vn');
+            $(par + ' .col3 ._2sg34').remove();
+
+            $(par + ' select[name="currentCategory"] option[value="PLACEHOLDER"]').remove();
+            $(par + ' select[name="currentCategory"]').prop('disabled', false);
+        }
+    }
+
+    $('.edition100__btn').click(function (e) {
+        e.preventDefault();
+        let par = $(this).parents('._3zqJG');
+        $('.edition100__desc', par).slideToggle();
+    });
+
+    $('#filter_brand_view input[name="brand"]').on('change', function () {
+        console.log($(this));
+        let v = $(this).val();
+        switch (v) {
+            case 'Mazda':
+                $('.logoSuzuki, .logoEbussy, .logoMg').addClass('d-none');
+                $('.logoMazda').removeClass('d-none');
+                break;
+            case 'Suzuki':
+                $('.logoMazda, .logoEbussy, .logoMg').addClass('d-none');
+                $('.logoSuzuki').removeClass('d-none');
+                break;
+            case 'MG':
+                $('.logoMazda, .logoSuzuki, .logoEbussy').addClass('d-none');
+                $('.logoMg').removeClass('d-none');
+                break;
+            default:
+                $('.logoMazda, .logoSuzuki, .logoEbussy, .logoMg').removeClass('d-none');
+        }
+    });
+
+    $('.ebussyModelLinks a').click(function (e) {
+        e.preventDefault();
+        let id = $(this).attr('href');
+        $('html, body').animate({
+            scrollTop: $(id).offset().top - 71
+        }, 500);
+    });
+
+    $('.blumb2_reserved').click(function (e) {
+        e.preventDefault();
+        $('html, body').animate({
+            scrollTop: $('#ebussyForm').offset().top - 71
+        }, 500);
+    });
+
+    $('.ebusVariant').click(function (e) {
+        e.preventDefault();
+        let class_elem = $(this).data('class'),
+            title = $(this).data('title');
+
+        if (!$(this).hasClass('ebusVariantSelected')) {
+            $('.ebusVariant').removeClass('ebusVariantSelected');
+            $(this).addClass('ebusVariantSelected');
+            $('#ebussyForm input[name="variant"]').val(title);
+            $('#ebussyForm input[name="model"]').val('');
+
+            $('.ebusVariantDesc').hide();
+            $('.' + class_elem).slideDown();
+        }
+        else {
+            $(this).removeClass('ebusVariantSelected');
+            $('.ebusVariantDesc').hide();
+            $('#ebussyForm input[name="variant"], #ebussyForm input[name="model"]').val('');
+        }
+    });
+
+    $('.ebusVariantSmall').click(function (e) {
+        e.preventDefault();
+        let title = $(this).data('title');
+
+        if (!$(this).hasClass('ebusVariantSmallSelected')) {
+            $('.ebusVariantSmall').removeClass('ebusVariantSmallSelected');
+            $(this).addClass('ebusVariantSmallSelected');
+            $('#ebussyForm input[name="model"]').val(title);
+        }
+        else {
+            $(this).removeClass('ebusVariantSmallSelected');
+            $('#ebussyForm input[name="model"]').val('');
+        }
+    });
+
+    $('#ebussyForm button[name="senderBtn"]').click(function (e) {
+        e.preventDefault();
+        $('#ebussyForm input[type="text"], #ebussyForm input[type="email"], #ebussyForm input[type="tel"]').removeClass('er-form');
+        $('#ebussy_error').hide();
+        $('label[for="ebussy_customCheckboxInline1"]').removeClass('redText');
+
+        let anrede = $('#ebussy_anrede').val(),
+            vorname = $('#ebussy_dein_name').val(),
+            nachname = $('#ebussy_nachname').val(),
+            strabe = $('#ebussy_adresse').val(),
+            adresszusatz = $('#ebussy_adresszusatz').val(),
+            stadt = $('#ebussy_stadt').val(),
+            bundesland = $('#ebussy_bundesland').val(),
+            plz = $('#ebussy_plz').val(),
+            email = $('#ebussy_email').val(),
+            phone = $('#ebussy_phone').val(),
+            re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+        if (!anrede || !vorname || !nachname || !strabe || !adresszusatz || !stadt || !bundesland || !plz || !email || !phone || !$('#ebussy_customCheckboxInline1').is(':checked')) {
+            !anrede ? $('#ebussy_anrede').addClass('er-form') : '';
+            !vorname ? $('#ebussy_dein_name').addClass('er-form') : '';
+            !nachname ? $('#ebussy_nachname').addClass('er-form') : '';
+            !strabe ? $('#ebussy_adresse').addClass('er-form') : '';
+            !adresszusatz ? $('#ebussy_adresszusatz').addClass('er-form') : '';
+            !stadt ? $('#ebussy_stadt').addClass('er-form') : '';
+            !bundesland ? $('#ebussy_bundesland').addClass('er-form') : '';
+            !plz ? $('#ebussy_plz').addClass('er-form') : '';
+            !email ? $('#ebussy_email').addClass('er-form') : '';
+            !phone ? $('#ebussy_phone').addClass('er-form') : '';
+            if (!$('#ebussy_customCheckboxInline1').is(':checked')) {
+                $('#ebussy_error').show();
+                $('label[for="ebussy_customCheckboxInline1"]').addClass('redText');
+            }
+        }
+        else {
+            if (!re.test(email)) {
+                $('#ebussy_email').addClass('er-form');
+            }
+            else {
+                let form = $('#ebussyForm form')[0],
+                    formData = new FormData(form);
+                $.ajax({
+                    url: 'ajax/ebussyform.php',
+                    dataType: 'text',
+                    type: 'post',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        let mes = '';
+                        if (data == 'ok') mes = 'Vielen dank<br>Ihre Anfrage wurde erfolgreich versandt. Wir melden uns in Kürze bei Ihnen, um einen Termin zu vereinbaren.';
+                        else mes = 'Ein Fehler ist aufgetreten.';
+                        //mes = '<p>'+mes+'</p>';
+                        mes = '<div class="jcKVD"><div class="J1Cih"><div class="VUHAu"><div class="_1FA0I _2HUQI"><div class="_3TK6f _2VewE _39h2A"><h2 class="_33TsE">' + mes + '</h2></div></div></div></div></div>';
+
+                        $('#ebussyForm').html(mes);
+                    }
+                });
+            }
+        }
+    });
+
+    $(document).on('click', '#modal_testdrive table td', function (e) {
+        e.preventDefault();
+        $('#modal_testdrive .er-mes2').remove();
+
+        let par = $(this).parent();
+        if (!par.hasClass('disabled')) {
+            $('#modal_testdrive table td').removeClass('selected');
+            $(this).addClass('selected');
+            let time = $('td:first-child div', par).text();
+            $('#td_time').val(time);
+        }
+    });
+
+    $('#modal_testdrive button[name="senderBtn"]').click(function (e) {
+        e.preventDefault();
+        $('#td_name, #td_phone, #td_email').removeClass('er-form');
+        $('#modal_testdrive .er-mes').hide();
+
+        let name = $('#td_name').val(),
+            phone = $('#td_phone').val(),
+            time = $('#td_time').val(),
+            email = $('#td_email').val(),
+            re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+        if (!name || !phone || !time) {
+            !name ? $('#td_name').addClass('er-form') : '';
+            !phone ? $('#td_phone').addClass('er-form') : '';
+            !time ? $('#modal_testdrive .er-mes').show() : '';
+        }
+        else {
+            if (email && !re.test(email)) {
+                $('#td_email').addClass('er-form');
+            }
+            else {
+                let formData = new FormData($('#modal_testdrive form')[0]);
+                $.ajax({
+                    url: 'ajax/testdrive.php',
+                    dataType: 'json',
+                    type: 'post',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    beforeSend: function () {
+                        $('#modal_testdrive .loader').show();
+                    },
+                    success: function (data) {
+                        $('#modal_testdrive .loader').hide();
+
+                        let mes = '';
+                        if (data.status == 'ok') {
+                            mes = '<strong>Vielen Dank!<br/>Wir freuen uns Sie an unserem E-Date begrüßen zu dürfen!</strong>';
+                        }
+                        else if (data.status == 'busy one') {
+                            mes = '<strong>Es ist ein Fehler aufgetreten. Bitte wählen sie einen anderen Termin.</strong>';
+                        }
+                        else if (data.status == 'busy total') {
+                            mes = '<strong>Alle Termine für das Modell sind ausgebucht.</strong>';
+                        }
+                        else {
+                            mes = '<strong>Ein Fehler ist aufgetreten.</strong>';
+                        }
+
+                        if (data.status != 'busy one') {
+                            $('.J1Cih-title, .part2 h3').hide();
+                            $('#modal_testdrive .baseContent').html('<p class="text-center">' + mes + '</p>');
+                        }
+                        else {
+                            let par = $('#modal_testdrive .selected').parent();
+                            $('#modal_testdrive .selected div').text('Reserviert');
+                            $('#modal_testdrive .selected').removeClass('selected');
+                            par.addClass('disabled');
+                            $('#td_time').val('');
+
+                            $('#modal_testdrive .er-mes').after('<p class="text-danger er-mes2">' + mes + '</p>');
+                        }
+                    }
+                })
+            }
+        }
+    });
+
+    $('#modal_mx_special button[name="senderBtn"]').click(function (e) {
+        $('#modal_mx_special .text-danger').addClass('d-none');
+        $('#modal_mx_special input').removeClass('er-form');
+
+        let name = $('#modal_mx_special input[name="name"]').val(),
+            phone = $('#modal_mx_special input[name="phone"]').val(),
+            email = $('#modal_mx_special input[name="email"]').val(),
+            date = $('#modal_mx_special input[name="dateFrom"]').val(),
+            colDays = $('#modal_mx_special select[name="colDays"]').val(),
+            message = $('#modal_mx_special textarea[name="message"]').val(),
+            re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+        if (!name || !phone || !date || !colDays) {
+            $('#modal_mx_special .text-danger').removeClass('d-none');
+        }
+        else {
+            if (email && !re.test(email)) {
+                $('#modal_mx_special input[name="email"]').addClass('er-form');
+            }
+            else {
+                if (!$('#consentCheckMx').is(':checked')) {
+                    $('#modal_mx_special .text-danger').removeClass('d-none');
+                }
+                else {
+                    $.ajax({
+                        url: 'ajax/modalMx.php',
+                        dataType: 'text',
+                        type: 'post',
+                        data: {
+                            name,
+                            phone,
+                            email,
+                            date,
+                            colDays,
+                            message
+                        },
+                        success: function (data) {
+                            if (data == 'ok') {
+                                $('.appointmentModal .modal-title').text('Vielen Dank für Ihre Nachricht!');
+                                $('.appointmentModal .modal-body p').html('Ihre Anfrage wird in Kürze bearbeitet.');
+                                $('#modal_mx_special input[type="text"], #modal_mx_special input[type="email"], #modal_mx_special textarea').val('');
+
+                                $('#modal_mx_special').fadeOut();
+
+                                $('.appointmentModal').modal('show');
+                                $('.appointmentModal').on('hidden.bs.modal', function (e) {
+                                    $('html').css({
+                                        'overflow': 'auto'
+                                    });
+                                });
+                            } else {
+                                $('.appointmentModal .modal-title').text('Ein Fehler ist aufgetreten.');
+                                $('.appointmentModal .modal-body p').html('Versuchen Sie erneut, das Formular zu senden.');
+
+                                $('.appointmentModal').modal('show');
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    });
+    $('#modal_mx_mazda_special button[name="senderMXBtn"]').click(function (e) {
+        $('#modal_mx_mazda_special .text-danger').addClass('d-none');
+        $('#modal_mx_mazda_special input').removeClass('er-form');
+
+        let name = $('#modal_mx_mazda_special input[name="name"]').val(),
+            phone = $('#modal_mx_mazda_special input[name="phone"]').val(),
+            email = $('#modal_mx_mazda_special input[name="email"]').val(),
+            date = $('#modal_mx_mazda_special input[name="dateFrom"]').val(),
+            colDays = $('#modal_mx_mazda_special select[name="colDays"]').val(),
+            wunschfahrzeug = $('#modal_mx_mazda_special select[name="wunschfahrzeug"]').val(),
+            message = $('#modal_mx_mazda_special textarea[name="message"]').val(),
+            re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+        if (!name || !phone || !date || !colDays) {
+            $('#modal_mx_mazda_special .text-danger').removeClass('d-none');
+        }
+        else {
+            if (email && !re.test(email)) {
+                $('#modal_mx_mazda_special input[name="email"]').addClass('er-form');
+            }
+            else {
+                if (!$('#consentCheckMx').is(':checked')) {
+                    $('#modal_mx_mazda_special .text-danger').removeClass('d-none');
+                }
+                else {
+                    $.ajax({
+                        url: 'ajax/modalMazdaMx.php',
+                        dataType: 'text',
+                        type: 'post',
+                        data: {
+                            name,
+                            phone,
+                            email,
+                            date,
+                            colDays,
+                            wunschfahrzeug,
+                            message
+                        },
+                        success: function (data) {
+                            if (data == 'ok') {
+                                $('.appointmentModal .modal-title').text('Vielen Dank für Ihre Nachricht!');
+                                $('.appointmentModal .modal-body p').html('Ihre Anfrage wird in Kürze bearbeitet.');
+                                $('#modal_mx_mazda_special input[type="text"], #modal_mx_mazda_special input[type="email"], #modal_mx_mazda_special textarea').val('');
+
+                                $('#modal_mx_mazda_special').fadeOut();
+
+                                $('.appointmentModal').modal('show');
+                                $('.appointmentModal').on('hidden.bs.modal', function (e) {
+                                    $('html').css({
+                                        'overflow': 'auto'
+                                    });
+                                });
+                            } else {
+                                $('.appointmentModal .modal-title').text('Ein Fehler ist aufgetreten.');
+                                $('.appointmentModal .modal-body p').html('Versuchen Sie erneut, das Formular zu senden.');
+
+                                $('.appointmentModal').modal('show');
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    });
+    $('#modal_kontaktformular_base button[name="senderBtn"]').click(function (e) {
+        $('#modal_kontaktformular_base .text-danger').addClass('d-none');
+        $('#modal_kontaktformular_base input').removeClass('er-form');
+
+        let name = $('#modal_kontaktformular_base input[name="name"]').val(),
+            phone = $('#modal_kontaktformular_base input[name="phone"]').val(),
+            email = $('#modal_kontaktformular_base input[name="email"]').val(),
+            date = $('#modal_kontaktformular_base input[name="dateKontakt"]').val(),
+            message = $('#modal_kontaktformular_base textarea[name="message"]').val(),
+            re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+        if (!name || !phone || !date) {
+            $('#modal_kontaktformular_base .text-danger').removeClass('d-none');
+        }
+        else {
+            if (email && !re.test(email)) {
+                $('#modal_kontaktformular_base input[name="email"]').addClass('er-form');
+            }
+            else {
+                if (!$('#consentCheckKontakt').is(':checked')) {
+                    $('#modal_kontaktformular_base .text-danger').removeClass('d-none');
+                }
+                else {
+                    $.ajax({
+                        url: 'ajax/modalKontaktAutocheck.php',
+                        dataType: 'text',
+                        type: 'post',
+                        data: {
+                            name,
+                            phone,
+                            email,
+                            date,
+                            message
+                        },
+                        success: function (data) {
+                            if (data == 'ok') {
+                                $('.appointmentModal .modal-title').text('Vielen Dank!');
+                                $('.appointmentModal .modal-body p').html('Ein Mitarbeiter wird sich schnellstmöglich bei Ihnen melden und Ihren Termin bestätigen.');
+                                $('#modal_kontaktformular_base input[type="text"], #modal_kontaktformular_base input[type="email"], #modal_kontaktformular_base textarea').val('');
+
+                                $('#modal_kontaktformular_base').fadeOut();
+
+                                $('.appointmentModal').modal('show');
+                                $('.appointmentModal').on('hidden.bs.modal', function (e) {
+                                    $('html').css({
+                                        'overflow': 'auto'
+                                    });
+                                });
+                            } else {
+                                $('.appointmentModal .modal-title').text('Ein Fehler ist aufgetreten.');
+                                $('.appointmentModal .modal-body p').html('Versuchen Sie erneut, das Formular zu senden.');
+
+                                $('.appointmentModal').modal('show');
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    });
+
+    $('#customCheck6').click(function () {
+        if ($(this).is(':checked')) {
+            $('.form-row-memo').slideDown(400);
+        }
+        else {
+            $('.form-row-memo').slideUp(400);
+            setTimeout(function () {
+                $('.form-row-memo textarea[name="memo"]').val('');
+            }, 400);
+        }
+    });
+
+    $('.faqWrapper__item h3').click(function (e) {
+        e.preventDefault();
+        if ($(this).hasClass('close-faq')) {
+            $(this).removeClass('close-faq').addClass('open-faq');
+            $(this).parent().find('.faqWrapper__content').slideDown();
+        }
+        else {
+            $(this).removeClass('open-faq').addClass('close-faq');
+            $(this).parent().find('.faqWrapper__content').slideUp();
+        }
+    });
+
+    if (window.location.hash == '#probefahrt') {
+        openTestdrive();
+    }
+    else if (window.location.hash == '#suzuki') {
+        slidedMenu($('#accessoriesTabs #react-tabs-2'));
+    }
+
+    /* let cookieAlert = Cookies.get('cookieAlert');
+    if (!cookieAlert) {
+        $('#modal_alert').fadeIn();
+        $('html').css({
+            'overflow': 'hidden'
+        });
+    } */
+
+    /* $('#modal_alert ._7fdJb, #modal_alert button[name="OK"]').click(function (e) {
+        e.preventDefault();
+        $('#modal_alert').fadeOut();
+        $('html').css({
+            'overflow': 'auto'
+        });
+
+        Cookies.set('cookieAlert', 'ok', {
+            path: '/',
+            domain: '.al-auto.de'
+        });
+    }); */
+
+    $('.carDetailBox__link').click(function () {
+        let type = $(this).data('type');
+        if (type == 'credit') $('#car-finances-calculator nav ul li')[0].click();
+        else $('#car-finances-calculator nav ul li')[1].click();
+        $('html, body').animate({
+            scrollTop: $('#car-finances-calculator').offset().top
+        }, 500);
+    });
+
+    $('.aboBox__item').click(function () {
+        if ($('#car-finances-calculator h2').text() == 'Finanzierung & Leasing') {
+            $('#car-finances-calculator nav ul li')[2].click();
+        }
+        else {
+            $('#car-finances-calculator nav ul li')[1].click();
+        }
+        $('html, body').animate({
+            scrollTop: $('#car-finances-calculator').offset().top
+        }, 500);
+    });
+
+    $('.carPurchase__btn_keine').click(function () {
+        if (!$(this).hasClass('active')) {
+            $(this).addClass('active');
+            $('.vinWrapper').slideUp();
+
+            let par = $('.carPurchase__input_2').parent();
+            par.removeClass('er-form');
+
+            $('.carPurchase__btn_next1').trigger('click');
+        }
+        else {
+            $(this).removeClass('active');
+            $('.vinWrapper').slideDown();
+        }
+    });
+
+    $('.carPurchase__btn_next-api1').click(function () {
+        $('.modell_api').removeClass('er-form');
+        let model = $('.modell_api').val();
+        if (!model) {
+            $('.modell_api').addClass('er-form');
+        }
+        else {
+            runApi(2);
+        }
+    });
+
+    $('.carPurchase__btn_next-api2').click(function () {
+        $('.type_api, .modelslist_api').removeClass('er-form');
+        let type = $('.type_api').val(),
+            modelslist = $('.modelslist_api').val();
+
+        if (!type || !modelslist) {
+            !type ? $('.type_api').addClass('er-form') : '';
+            !modelslist ? $('.modelslist_api').addClass('er-form') : '';
+        }
+        else {
+            runApi(3);
+        }
+    });
+
+    $('.carPurchase__btn_next-api3').click(function () {
+        runApi(4);
+    });
+
+    $('.type_api').on('change', function () {
+        let id = $('option:selected', this).data('id');
+        console.log('id: ' + id);
+        if (id) {
+            let options = $('.' + id).html();
+            $('.modelslist_api').html(options);
+        }
+        else {
+            $('.modelslist_api').html('<option value="">-</option>');
+        }
+    });
+
+    $('#carDetailBoxTab .nav-link').click(function () {
+        if (!$(this).hasClass('active')) {
+            let hr = $(this).attr('data-href');
+            $('#carDetailBoxTab .nav-link, .carDetailBoxTabContent>div').removeClass('active');
+            $(this).addClass('active');
+            $('.' + hr).addClass('active');
+        }
+    });
+
+    //Beratungstermin
+    let curDate = new Date(),
+        hours = curDate.getHours(),
+        colDays = 0;
+    if (hours >= 18) colDays = 1;
+
+    let setDate = moment().add({ days: colDays }).toDate();
+    if (setDate.getDay() === 0) {
+        colDays++;
+        setDate = moment().add({ days: colDays }).toDate();
+    }
+    else if (setDate.getDay() === 6) {
+        setTimelinesConsultation(setDate);
+    }
+
+    let pickerConsultation = new Pikaday({
+        field: document.getElementById('dateFieldConsultation'),
+        firstDay: 1,
+        format: 'DD.MM.YYYY',
+        minDate: setDate,
+        maxDate: new Date(2023, 11, 31),
+        yearRange: 0,
+        disableDayFn: date => exceptionDate(date),
+        onSelect: function (date) {
+            setTimelinesConsultation(date);
+        },
+        i18n: i18n
+    });
+    pickerConsultation.setDate(setDate);
+
+    //send message
+    /*$('#modal_consultation_appointment button[name="senderBtn"]').click(function (e) {
+        $('#modal_consultation_appointment input[type="text"]').removeClass('er-form');
+        $('#modal_consultation_appointment .text-danger').addClass('d-none');
+        let date = $('#dateFieldConsultation').val(),
+            time = $('#timeFieldConsultation').val(),
+            name = $('#modal_consultation_appointment input[name="name"]').val(),
+            phone = $('#modal_consultation_appointment input[name="phone"]').val(),
+            email = $('#modal_consultation_appointment input[name="email"]').val(),
+            memo = $('#modal_consultation_appointment textarea[name="message"]').val(),
+            model = $('.details-infobox h1').text(),
+            link = window.location.href,
+            re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+            leistungen = '';
+
+        if (!model) model = 'info.al-auto.de';
+
+        $('#modal_consultation_appointment .custom-control-input-leistungen:checked').each(function (i, elem) {
+            leistungen = leistungen ? leistungen + ', ' + $(this).val() : $(this).val();
+        });
+
+        if (!date || !time || !leistungen || !name || !phone || !email) {
+            !name ? $('#modal_consultation_appointment input[name="name"]').addClass('er-form') : '';
+            !phone ? $('#modal_consultation_appointment input[name="phone"]').addClass('er-form') : '';
+            !email ? $('#modal_consultation_appointment input[name="email"]').addClass('er-form') : '';
+            $('#modal_consultation_appointment .text-danger').removeClass('d-none');
+        }
+        else {
+            if (!re.test(email)) {
+                $('#modal_consultation_appointment input[name="email"]').addClass('er-form');
+            }
+            else {
+                if (!$('#consultationConsentCheck').is(':checked')) {
+                    $('#modal_consultation_appointment .text-danger').removeClass('d-none');
+                }
+                else {
+                    $.ajax({
+                        url: 'ajax/consultation_appointment.php',
+                        dataType: 'text',
+                        type: 'post',
+                        data: { date, time, leistungen, memo, name, phone, email, model, link },
+                        beforeSend: function () {
+                            $('#modal_consultation_appointment ._2Uzhy').append('<div class="over"></div>');
+                            $('#modal_consultation_appointment ._30SmI').append('<div class="_3EQhu"><div></div></div>');
+                        },
+                        success: function (data) {
+                            $('#modal_consultation_appointment ._3EQhu, #modal_consultation_appointment ._2Uzhy .over').remove();
+                            if (data == 'ok') {
+                                $('.contactAppointmentFeedbackModal .modal-title').text('Vielen Dank für Ihre Nachricht!');
+                                $('.contactAppointmentFeedbackModal .modal-body p').html('Ihre Anfrage wird in Kürze bearbeitet.');
+                                $('#modal_consultation_appointment input[type="text"], #modal_consultation_appointment textarea').val('');
+                                $('#modal_consultation_appointment input[type="checkbox"]').each(function () {
+                                    $(this).prop('checked', false);
+                                });
+
+                                $('#modal_consultation_appointment').fadeOut();
+
+                                $('.contactAppointmentFeedbackModal').modal('show');
+                                $('.contactAppointmentFeedbackModal').on('hidden.bs.modal', function (e) {
+                                    $('html').css({
+                                        'overflow': 'auto'
+                                    });
+                                });
+                            }
+                            else {
+                                $('.contactAppointmentFeedbackModal .modal-title').text('Ein Fehler ist aufgetreten.');
+                                $('.contactAppointmentFeedbackModal .modal-body p').html('Versuchen Sie erneut, das Formular zu senden.');
+
+                                $('.contactAppointmentFeedbackModal').modal('show');
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    });*/
+
+    $('.leasingFilter__btn').on('click', function (e) {
+        if (!$(this).hasClass('active')) {
+            $('.leasingFilter__btn').removeClass('active');
+            $(this).addClass('active');
+            const type = $(this).text();
+            $.ajax({
+                type: "post",
+                url: "ajax/easyLeasingFilter.php",
+                data: { type },
+                dataType: "json",
+                beforeSend: function () {
+                    $('.leasingFilter__marka').prop('disabled', true);
+                    $('.leasingFilter__model').html('<option value="">Modelle</option>').prop('disabled', true);
+                    $('.leasingFilter__factor').html('<option value="">Leasingfaktor</option>').prop('disabled', true);
+                    $('.leasingFilter__wrapper4 .btn').prop('disabled', true);
+
+                    if (!$('img').is('.leasingFilter__loader1'))
+                        $('.leasingFilter__wrapper2, .leasingFilter__wrapper5').append('<img class="leasingFilter__loader leasingFilter__loader1" src="assets/templates/mazda/img/Spinner-1s-200px.gif" alt="loader">');
+
+                    $('.leasingFilter .cars-list').html('');
+                },
+                success: function (data) {
+                    $('.leasingFilter__loader').remove();
+
+                    $('.leasingFilter__marka, .leasingFilter__factor, .leasingFilter__wrapper4 .btn').prop('disabled', false);
+
+                    $('.leasingFilter__model').html(data.model);
+                    //$('.leasingFilter__model').html(data.models);
+                    $('.leasingFilter__factor').html(data.leasingfactor);
+                }
+            });
+        }
+    });
+
+
+    $('.leasingFilter__marka').on('change', function () {
+        let type = $('.leasingFilter__btn.active').text(),
+            marka = $(this).val();
+        if (marka) {
+            $.ajax({
+                type: "post",
+                url: "ajax/easyLeasingFilter.php",
+                data: { type, marka },
+                dataType: "json",
+                beforeSend: function () {
+                    $('.leasingFilter__model').html('<option value="">Modelle</option>').prop('disabled', true);
+                    $('.leasingFilter__factor').html('<option value="">Leasingfaktor</option>').prop('disabled', true);
+                    $('.leasingFilter__wrapper4 .btn').prop('disabled', true);
+
+                    if (!$('img').is('.leasingFilter__loader1'))
+                        $('.leasingFilter__wrapper5').append('<img class="leasingFilter__loader leasingFilter__loader1" src="assets/templates/mazda/img/Spinner-1s-200px.gif" alt="loader">');
+
+                    $('.leasingFilter .cars-list').html('');
+                },
+                success: function (data) {
+                    $('.leasingFilter__loader').remove();
+                    $('.leasingFilter__factor, .leasingFilter__model, .leasingFilter__wrapper4 .btn').prop('disabled', false);
+
+                    $('.leasingFilter__model').html(data.models);
+                    $('.leasingFilter__factor').html(data.leasingfactor);
+                }
+            });
+        }
+    });
+
+    $('.leasingFilter__model').on('change', function () {
+        let type = $('.leasingFilter__btn.active').text(),
+            model = $(this).val();
+        if (model) {
+            $.ajax({
+                type: "post",
+                url: "ajax/easyLeasingFilter.php",
+                data: { type, model },
+                dataType: "json",
+                beforeSend: function () {
+                    $('.leasingFilter__factor').html('<option value="">Leasingfaktor</option>').prop('disabled', true);
+                    $('.leasingFilter__wrapper4 .btn').prop('disabled', true);
+
+                    if (!$('img').is('.leasingFilter__loader1'))
+                        $('.leasingFilter__wrapper5').append('<img class="leasingFilter__loader leasingFilter__loader1" src="assets/templates/mazda/img/Spinner-1s-200px.gif" alt="loader">');
+
+                    $('.leasingFilter .cars-list').html('');
+                },
+                success: function (data) {
+                    $('.leasingFilter__loader').remove();
+                    $('.leasingFilter__factor, .leasingFilter__wrapper4 .btn').prop('disabled', false);
+                    $('.leasingFilter__factor').html(data.leasingfactor);
+                }
+            });
+        }
+    });
+
+    $('.leasingFilter__wrapper4 .btn').click(function (e) {
+        e.preventDefault();
+        const type = $('.leasingFilter__btn.active').text(),
+            marka = $('.leasingFilter__marka').val(),
+            model = $('.leasingFilter__model').val(),
+            factor = $('.leasingFilter__factor').val();
+        $.ajax({
+            type: "post",
+            url: "ajax/easyleasingfilterresults.html",
+            data: { type, marka, model, factor },
+            dataType: "html",
+            beforeSend: function () {
+                if (!$('div').is('.leasingFilter__loader-wrapper'))
+                    $('.cars-list').html('<div class="leasingFilter__loader-wrapper text-center"><img class="leasingFilter__loader leasingFilter__loader-cars" src="assets/templates/mazda/img/Spinner-1s-200px.gif" alt="loader"></div>');
+            },
+            success: function (data) {
+                $('.leasingFilter__loader-wrapper').remove();
+                if (data) {
+                    $('.sl5').slick('unslick');
+                    $('.cars-list').html(data);
+                    sl5SlideToForm();
+                }
+                else {
+                    $('.cars-list').html('Keine Autos gefunden');
+                }
+            }
+        });
+    });
+
+    $('.black-sale-select').on('change', function () {
+        let v = $(this).val(),
+            img = link = '';
+        switch (v) {
+            case 'M3':
+                img = '/fileadmin/black-sale/m3.png';
+                link = '/?brand=Mazda&model=4';
+                break;
+            case 'CX-30':
+                img = '/fileadmin/black-sale/cx-30.png';
+                link = '/?brand=Mazda&model=3';
+                break;
+            case 'MX-30':
+                img = '/fileadmin/black-sale/mx-30.png';
+                link = '/?brand=Mazda&model=25';
+                break;
+        }
+
+        $('.black-sale-link').attr('href', link);
+        $('.black-sale-img').attr('src', img);
+    });
+
+    if ($('.megaTimerWrapper').length) {
+        let interval = setInterval(() => {
+            if ($('.megaTimerWrapper .timer-element').length) {
+                $('.megaTimerWrapper .timer-element span').each(function () {
+                    $(this).text().trim() == 'дней' ? $(this).text('Tage') : ''; // days
+                    $(this).text().trim() == 'часов' ? $(this).text('Stunden') : ''; // hours
+                    $(this).text().trim() == 'минут' ? $(this).text('Minuten') : ''; // minutes
+                    $(this).text().trim() == 'секунд' ? $(this).text('Sekunden') : ''; // seconds
+                });
+                $('.megaTimerWrapper').show();
+                clearInterval(interval);
+            }
+        }, 100);
+    }
+
+    $('.block-inner-link').on('click', function () {
+        let num = $(this).data('num'),
+            text = $('.block-inner__description', this).html();
+
+        $('.block-inner-link').not(this).removeClass('active');
+        $('.showDescRow').html('').hide();
+
+        if (!$(this).hasClass('active')) {
+            $(this).addClass('active');
+            if (num == 1)
+                $('.showDescRow1').html(text).show();
+            else
+                $('.showDescRow2').html(text).show();
+        }
+        else {
+            $(this).removeClass('active');
+        }
+    });
+
+    $(document).on('click', '#hi-lp-highlights ._3BWAB', function () {
+        $('#hi-lp-highlights ._3BWAB').removeClass('_33MoC');
+        $(this).addClass('_33MoC')
+        /*var scale = parseFloat(($(this).width() + 64) / 100).toFixed(2);
+        var offset = Math.ceil($(this).parents('.slick-slide').offset().left - $(this).parents('.schwenke-carousel').offset().left);
+
+        $('#hi-lp-highlights ._1mlMu').children('._2-BE_').css({
+            'transform': 'translateX(' + offset + 'px) scaleX(' + scale + ')'
+        });*/
+
+        $('.react-tabs__tab-schwenke-panel').removeClass('react-tabs__tab-schwenke-panel--selected');
+        $('#' + $(this).attr('aria-controls')).addClass('react-tabs__tab-schwenke-panel--selected');
+    });
+
+    $('.schwenke-carousel').slick({
+        slidesToShow: 5,
+        slidesToScroll: 1,
+        arrows: false,
+        infinite: false,
+        responsive: [
+            {
+                breakpoint: 991,
+                settings: {
+                    slidesToShow: 4
+                }
+            }
+        ]
+    });
+
+    $('.schwenke ._3J6Fh-prev').on('click', function(){
+        $('.schwenke-carousel').slick('slickPrev');
+    });
+
+    $('.schwenke ._3J6Fh-next').on('click', function(){
+        $('.schwenke-carousel').slick('slickNext');
+    });
+
+    $('.schwenke-carousel').on('afterChange', function(event, slick, currentSlide){
+        let elem = $('#hi-lp-highlights ._33MoC');
+        let scale = parseFloat((elem.width() + 64) / 100).toFixed(2);
+        let offset = Math.ceil(elem.parents('.slick-slide').offset().left - elem.parents('.schwenke-carousel').offset().left);
+        $('#hi-lp-highlights ._1mlMu').children('._2-BE_').css({
+            'transform': 'translateX(' + offset + 'px) scaleX(' + scale + ')'
+        });
+    });
+
+    $(document).on('click', '.e-date-models__item', function () {
+        if (!$(this).hasClass('active')) {
+            $('.e-date-models__item').removeClass('active');
+            $(this).addClass('active');
+            let model = $('.e-date-models__name span', this).text();
+
+            $.ajax({
+                type: "post",
+                url: "ajax/testdriveTable.php",
+                data: { model },
+                dataType: "json",
+                beforeSend: function () {
+                    /* if (!$('div').is('.leasingFilter__loader-wrapper'))
+                        $('.cars-list').html('<div class="leasingFilter__loader-wrapper text-center"><img class="leasingFilter__loader leasingFilter__loader-cars" src="assets/templates/mazda/img/Spinner-1s-200px.gif" alt="loader"></div>'); */
+                },
+                success: function (data) {
+                    if (!data.error) {
+                        $('.part2-form__model').val(model);
+                        $('.part2-table').html(data.content);
+                        $('.part2-table, .part2-form').removeClass('col-md-12 col-md-6').addClass(data.class);
+
+                        $('#modal_testdrive .part1').hide();
+                        $('#modal_testdrive .part2').show();
+
+                        //$('.part2 h3').hide();
+                    }
+                    else {
+                        alert(data.error);
+                    }
+                }
+            });
+        }
+    });
+
+    $('.mg-slider__box').slick({
+    	dots: true,
+    	infinite: true,
+    	speed: 1200,
+    	adaptiveHeight: true,
+    	autoplay: false,
+    	autoplaySpeed: 5000,
+    	arrows: false
+    });
+
+    $('.leaseRedemptionModal').on('hide.bs.modal', function (e) {
+        location.reload();
+    });
+});
+
+function scrollToElem(elem, id) {
+    let top = $('#' + id).offset().top;
+    $('body, html').animate({ scrollTop: top }, 500);
+}
+
+
+gMap = {
+    props: {
+        zoom: 15,
+        markers: [{
+            lat: 51.49705,
+            lng: 6.83421,
+            type: 'primary'
+        },
+            /* {
+                lat: 51.925844,
+                lng: 7.16623,
+                type: 'secondary'
+            }, */
+        ],
+        zoomControl: true,
+        draggable: true,
+    }
+}
+
+d = {
+    primary: {
+        path: "M10 .6C4.8.6.5 4.7.5 9.8c0 1.4 0 2.4 1 4.1l7.6 12.2c.2.3.5.5.8.5.3 0 .7-.2.8-.5l7.5-12V14c.7-1.2 1.1-2.7 1.1-4.3.2-5-4-9.1-9.3-9.1zm0 11.8c-1.9 0-3.4-1.5-3.4-3.4S8.2 5.7 10 5.7s3.4 1.5 3.4 3.4-1.5 3.3-3.4 3.3z",
+        strokeOpacity: 0,
+        fillOpacity: 1,
+        fillColor: "#191919"
+    },
+    /* secondary: {
+        path: "M10 .6C4.8.6.5 4.7.5 9.8c0 1.4 0 2.4 1 4.1l7.6 12.2c.2.3.5.5.8.5.3 0 .7-.2.8-.5l7.5-12V14c.7-1.2 1.1-2.7 1.1-4.3.2-5-4-9.1-9.3-9.1zM16.7 13s-.1.1 0 0L10 23.7 3.4 13l-.1-.2c-.8-1.2-.8-1.8-.8-3.1 0-4 3.4-7.2 7.5-7.2s7.5 3.2 7.5 7.2c0 1.3-.3 2.5-.8 3.3zM10 4.6c-2.5 0-4.5 2-4.5 4.5s2 4.5 4.5 4.5 4.5-2 4.5-4.5-2-4.5-4.5-4.5zm0 7c-1.4 0-2.5-1.1-2.5-2.5S8.6 6.6 10 6.6s2.5 1.1 2.5 2.5-1.1 2.5-2.5 2.5z",
+        strokeOpacity: 0,
+        fillOpacity: 1,
+        fillColor: "#191919"
+    } */
+}
+gMap.center = function () {
+    var e = gMap.props.markers;
+    1 === e.length ? gMap.map.setCenter({
+        lat: e[0].lat,
+        lng: e[0].lng
+    }) : e.length > 1 && (gMap.map.fitBounds(gMap.bounds), gMap.map.panToBounds(gMap.bounds))
+}
+gMap.setMarker = function (e) {
+    var t = {
+        lat: e.lat,
+        lng: e.lng
+    };
+    new google.maps.Marker({
+        map: gMap.map,
+        position: t,
+        icon: d[e.type]
+    }),
+        gMap.bounds.extend(t)
+}
+
+$(document).on('submit', '.ajax_form', function() {
+    $("#modal_contact_header").attr("style","display:block");
+    $("#modal_contact_header .contactAppointmentFeedbackModal").attr("style","display:block");
+    $("#modal_contact_header .contactAppointmentFeedbackModal .modal-title").html("Vielen Dank!");
+    $("#modal_contact_header .contactAppointmentFeedbackModal .modal-body").html("<p>Ihre Anfrage wurde erfolgreich versandt."
+                            +"<br>Wir melden uns in Kürze bei Ihnen um einen Termin zu bestätigen</p>");
+
+});

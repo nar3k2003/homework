@@ -1,0 +1,542 @@
+$(function () {
+    let picker3_vor = '';
+
+    /* vor_ort_service */
+    let leistungen_vor = '',
+        ob_vor = '',
+        step_vor = '',
+        stepNext_vor = '';
+
+    $(document).on('click', '.vor_ort_service__btn_next', function () {
+        ob_vor = $('.vor_ort_service__step:visible');
+        step_vor = ob_vor.data('step');
+        stepNext_vor = step_vor + 1;
+        let errors = false;
+
+        switch (step_vor) {
+            case 1:
+                $('.vor_ort_service__step_1 .text-danger').addClass('d-none');
+                $('input[type="checkbox"]', ob_vor).each(function () {
+                    if (!$(this).prop('checked')) {
+                        errors = true;
+                    } else {
+                        errors = false;
+                        return false;
+                    }
+                });
+                if (errors) {
+                    $('.vor_ort_service__step_1 .text-danger').removeClass('d-none');
+                } else {
+                    $('.vor_ort_service__row-1 .vor_ort_service__summary-info').html('');
+                    leistungen_vor = '';
+                    $('input[type="checkbox"]:checked', ob_vor).each(function (i, elem) {
+                        $('.vor_ort_service__row-1 .vor_ort_service__summary-info').append('<div>' + $(this).val() + '</div>');
+                        leistungen_vor = leistungen_vor ? leistungen_vor + ', ' + $(this).val() : $(this).val();
+                    });
+
+                    if (leistungen_vor == 'Räderwechsel') {
+                        $('.vor_ort_service__step_3 .vor_ort_service__content .form-group:last-child').hide();
+                        $('.vor_ort_service__step_3 #customRadioInline4_vor').prop('checked', true);
+                        if ($('input[name="wheelRadio_vor"]:checked').val() == 'Ja') {
+                            $('.vor_ort_service__step_3 #customRadioInline1_vor').prop('checked', true);
+                            $('.vor_ort_service__step_3 .vor_ort_service__content .form-group:first-child').hide();
+                            $('.vor_ort_service__step_3 .form-group-number_vor').show();
+                        }
+                        else {
+                            $('.vor_ort_service__step_3 #customRadioInline2_vor').prop('checked', true);
+                            $('.vor_ort_service__step_3 .vor_ort_service__content .form-group:first-child').show();
+                            $('.vor_ort_service__step_3 .form-group-number_vor').hide();
+                        }
+                    }
+                    else {
+                        $('.vor_ort_service__step_3 #customRadioInline2_vor').prop('checked', true);
+                        $('.vor_ort_service__step_3 .vor_ort_service__content .form-group:last-child').show();
+
+                        $('.vor_ort_service__step_3 .vor_ort_service__content .form-group:first-child').show();
+                        $('.vor_ort_service__step_3 .form-group-number_vor').hide();
+                    }
+                }
+                break;
+            case 2:
+                $('#dateField_vor, #timeField_vor').removeClass('er-form');
+
+                let dateVal = $('#dateField_vor').val(),
+                    timeVal = $('#timeField_vor').val();
+
+                if (!dateVal || dateVal.length < 8) {
+                    $('#dateField_vor').addClass('er-form');
+                    errors = true;
+                }
+                else if (!timeVal) {
+                    $('#timeField_vor').addClass('er-form');
+                    errors = true;
+                }
+                else {
+                    $('.vor_ort_service__row-2 .vor_ort_service__summary-info').html('<div>' + dateVal + '</div>');
+                    $('.vor_ort_service__row-3 .vor_ort_service__summary-info').html('<div>' + timeVal + '</div>');
+                }
+                break;
+            case 3:
+                $('.vor_ort_service__row-4').addClass('d-none').find('.vor_ort_service__summary-info').html('');
+
+                let check1 = $('.vor_ort_service__step_3 input[name="customRadioInline1_vor"]:checked').val();
+
+                unsetPreloadvor_ort_service();
+                if (check1 != 'Nein, noch nicht') {
+                    let poleMark = $('input[name="poleMark_vor"]').val();
+                    $('input[name="poleMark_vor"]').removeClass('er-form');
+                    errors = true;
+                    if (!poleMark) {
+                        $('input[name="poleMark_vor"]').addClass('er-form');
+                    }
+                    else {
+                        vor_ort_serviceSetData(poleMark, leistungen_vor);
+                        $('.vor_ort_service__inputNumber').val(poleMark);
+                    }
+                }
+                $('.vor_ort_service__row-4').removeClass('d-none').find('.vor_ort_service__summary-info').html('<div>' + check1 + '</div>');
+
+                break;
+            case 4:
+                $('select, input[type="text"]', ob_vor).removeClass('er-form');
+
+                let brand = $('select[name="brand"]', ob_vor).val(),
+                    klm = $('.vor_ort_service__inputKlm', ob_vor).val(),
+                    number = $('.vor_ort_service__inputNumber', ob_vor).val(),
+                    number2 = $('.vor_ort_service__inputNumber2', ob_vor).val(),
+                    /* model = $('.vor_ort_service__inputModel', ob_vor).val(), */
+                    text = $('.vor_ort_service__inputText', ob_vor).val(),
+                    client = $('.vor_ort_service__step_3 input[name="customRadioInline1_vor"]:checked').val();
+
+                if (client == 'Ja') {
+                    if (!brand || !klm || !number) {
+                        !brand ? $('select[name="brand"]', ob_vor).addClass('er-form') : '';
+                        !klm ? $('.vor_ort_service__inputKlm', ob_vor).addClass('er-form') : '';
+                        !number ? $('.vor_ort_service__inputNumber', ob_vor).addClass('er-form') : '';
+
+                        errors = true;
+                    } else {
+                        $('.vor_ort_service__row-11').addClass('d-none').find('.vor_ort_service__summary-info').html('');
+
+                        $('.vor_ort_service__row-6 .vor_ort_service__summary-info').html('<div>' + brand + '</div>');
+                        $('.vor_ort_service__row-7 .vor_ort_service__summary-info').html('<div>' + number + '</div>');
+                        $('.vor_ort_service__row-8 .vor_ort_service__summary-info').html('<div>' + klm + '</div>');
+                        $('.vor_ort_service__row-9').addClass('d-none').find('.vor_ort_service__summary-info').html('');
+                        $('.vor_ort_service__row-10').addClass('d-none').find('.vor_ort_service__summary-info').html('');
+
+                        if (text) {
+                            $('.vor_ort_service__row-11').removeClass('d-none').find('.vor_ort_service__summary-info').html('<div>' + text + '</div>');
+                        }
+                    }
+                } else {
+                    if (!brand || !klm || !number || !number2) {
+                        !brand ? $('select[name="brand"]', ob_vor).addClass('er-form') : '';
+                        !klm ? $('.vor_ort_service__inputKlm', ob_vor).addClass('er-form') : '';
+                        !number ? $('.vor_ort_service__inputNumber', ob_vor).addClass('er-form') : '';
+                        !number2 ? $('.vor_ort_service__inputNumber2', ob_vor).addClass('er-form') : '';
+                        /* !model ? $('.vor_ort_service__inputModel', ob_vor).addClass('er-form') : ''; */
+
+                        errors = true;
+                    } else {
+                        $('.vor_ort_service__row-11').addClass('d-none').find('.vor_ort_service__summary-info').html('');
+
+                        $('.vor_ort_service__row-6 .vor_ort_service__summary-info').html('<div>' + brand + '</div>');
+                        $('.vor_ort_service__row-7 .vor_ort_service__summary-info').html('<div>' + number + '</div>');
+                        $('.vor_ort_service__row-8 .vor_ort_service__summary-info').html('<div>' + klm + '</div>');
+                        /* $('.vor_ort_service__row-9').removeClass('d-none').find('.vor_ort_service__summary-info').html('<div>' + model + '</div>'); */
+                        $('.vor_ort_service__row-10').removeClass('d-none').find('.vor_ort_service__summary-info').html('<div>' + number2 + '</div>');
+
+                        if (text) {
+                            $('.vor_ort_service__row-11').removeClass('d-none').find('.vor_ort_service__summary-info').html('<div>' + text + '</div>');
+                        }
+                    }
+                }
+                break;
+        }
+
+        if (!errors) {
+            let percent = 25;
+            if (step_vor == 1 && leistungen_vor == 'Räderwechsel') {
+                let service = $('input[name="wheelRadio_vor"]:checked').val();
+                $.ajax({
+                    url: 'ajax/appointmentTireGetData.php',
+                    dataType: 'json',
+                    type: 'post',
+                    data: { service: service },
+                    beforeSend: function () {
+                        setPreloadvor_ort_service();
+                    },
+                    success: function (data) {
+                        unsetPreloadvor_ort_service();
+
+                        // Pikaday
+                        picker3_vor ? picker3_vor.destroy() : '';
+                        picker3_vor = new Pikaday({
+                            field: document.getElementById('dateField_vor'),
+                            firstDay: 1,
+                            format: 'DD.MM.YYYY',
+                            minDate: moment().add({
+                                days: data.days
+                            }).toDate(),
+                            maxDate: new Date(2030, 12, 31),
+                            yearRange: [2020, 2030],
+                            disableDayFn: date => exceptionDate(date, true),
+                            onSelect: function (date) {
+                                let selectedDate = moment(picker3_vor.getDate()).format("YYYY-MM-DD");
+
+                                $.ajax({
+                                    url: 'ajax/appointmentTireGetTime.php',
+                                    dataType: 'html',
+                                    type: 'post',
+                                    data: { date: selectedDate },
+                                    beforeSend: function () {
+                                        setPreloadvor_ort_service();
+                                    },
+                                    success: function (dataTime) {
+                                        $('#timeField_vor').html(dataTime);
+                                        unsetPreloadvor_ort_service();
+                                    }
+                                });
+                            },
+                            i18n: i18n
+                        });
+                        //setDateNumberDays_vor(data.days, picker3_vor);
+
+                        ob_vor.hide().next().show();
+                        $('.vor_ort_service__btn_prev').removeClass('d-none');
+
+                        //progress bar
+                        progressBar_vor(percent, step_vor, '+');
+                    }
+                });
+            }
+            else {
+                if (step_vor == 1) {
+                    // Pikaday
+                    picker3_vor ? picker3_vor.destroy() : '';
+                    let num_days = 8;
+                    let date = moment().add({ days: num_days }).toDate();
+                    date.getDay() == 0 ? num_days++ : '';
+                    picker3_vor = new Pikaday({
+                        field: document.getElementById('dateField_vor'),
+                        firstDay: 1,
+                        format: 'DD.MM.YYYY',
+                        minDate: moment().add({ days: num_days }).toDate(),
+                        maxDate: new Date(2030, 12, 31),
+                        yearRange: [2020, 2030],
+                        disableDayFn: date => exceptionDate(date, true),
+                        onSelect: function (date) {
+                            setTimelines_vor(date);
+                        },
+                        i18n: i18n
+                    });
+                    //setDateNumberDays_vor(num_days, picker3_vor);
+                    //setTimelines_vor(date);
+                    ob_vor.hide().next().show();
+                }
+                else if (step_vor == 3 && leistungen_vor == 'Räderwechsel') {
+                    ob_vor.hide();
+                    $('.vor_ort_service__step_5').show();
+                    stepNext_vor = 5;
+                    step_vor = 4;
+                    percent = 50;
+                    $('.vor_ort_service__progress-point:eq(3)').addClass('active');
+                }
+                else {
+                    ob_vor.hide().next().show();
+                }
+
+                if (stepNext_vor == 5) {
+                    $('.vor_ort_service__btn_next').addClass('d-none');
+                    $('.vor_ort_service__btn_send').removeClass('d-none');
+                }
+
+                $('.vor_ort_service__btn_prev').removeClass('d-none');
+
+                //progress bar
+                progressBar_vor(percent, step_vor, '+');
+            }
+        }
+    });
+
+    $(document).on('click', '.vor_ort_service__btn_prev', function () {
+        let ob = $('.vor_ort_service__step:visible'),
+            step_vor = ob.data('step'),
+            stepPrev = step_vor - 1,
+            percent = 25;
+
+        if (step_vor == 5 && leistungen_vor == 'Räderwechsel') {
+            stepPrev = 3;
+            ob.hide();
+            $('.vor_ort_service__step_3').show();
+            percent = 50;
+        }
+        else {
+            ob.hide().prev().show();
+        }
+        stepPrev == 1 ? $('.vor_ort_service__btn_prev').addClass('d-none') : '';
+
+        $('.vor_ort_service__btn_send').addClass('d-none');
+        $('.vor_ort_service__btn_next').removeClass('d-none');
+
+        //progress bar
+        progressBar_vor(percent, stepPrev, '-');
+    });
+
+    $(document).on('change', '.vor_ort_service__step_3 input[name="customRadioInline1_vor"]', function () {
+        unsetPreloadvor_ort_service();
+        if ($(this).val() == 'Ja') {
+            /* $('.vor_ort_service__step_4 .form-row2>div:nth-child(2), .vor_ort_service__step_4 .form-row3').addClass('d-none'); */
+            $('.vor_ort_service__step_4 .form-row2').addClass('d-none');
+            $('.vor_ort_service__step_3 .form-group-number_vor').slideDown();
+        } else {
+            /* $('.vor_ort_service__step_4 .form-row2>div:nth-child(2), .vor_ort_service__step_4 .form-row3').removeClass('d-none'); */
+            $('.vor_ort_service__step_4 .form-row2').removeClass('d-none');
+            $('.vor_ort_service__step_3 .form-group-number_vor input[name="poleMark_vor"]').val('');
+            $('.vor_ort_service__step_3 .form-group-number_vor').slideUp();
+        }
+    });
+
+    $(document).on('click', '.vor_ort_service__btn_send', function () {
+        $('.vor_ort_service__step_5 input[type="text"]').removeClass('er-form');
+        $('.vor_ort_service__step_5 .text-danger').addClass('d-none');
+
+        let ob = $('.vor_ort_service__step_5'),
+            name = $('.vor_ort_service__inputName').val(),
+            email = $('.vor_ort_service__inputEmail').val(),
+            phone = $('.vor_ort_service__inputPhone').val(),
+            available = '',
+            re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+        //available
+        $('input[type="checkbox"]:checked', ob).each(function (i, elem) {
+            available += $(this).val() + ', ';
+        });
+        if (available) available = available.slice(0, -2);
+
+        if (!name || !email || !phone || !available) {
+            !name ? $('.vor_ort_service__inputName').addClass('er-form') : '';
+            !email ? $('.vor_ort_service__inputEmail').addClass('er-form') : '';
+            !phone ? $('.vor_ort_service__inputPhone').addClass('er-form') : '';
+            !available ? $('.text-danger', ob).removeClass('d-none') : '';
+        }
+        else {
+            if (!re.test(email)) {
+                $('.vor_ort_service__inputEmail').addClass('er-form');
+            }
+            else {
+                let formData = new FormData();
+                formData.set('date', $('.vor_ort_service__row-2 .vor_ort_service__summary-info div', ob).text());
+                formData.set('time', $('.vor_ort_service__row-3 .vor_ort_service__summary-info div', ob).text());
+
+                let obServices = $('.vor_ort_service__row-1 .vor_ort_service__summary-info div', ob);
+                if (obServices.length > 0) {
+                    let services = '';
+                    obServices.each(function () {
+                        let val = $(this).text();
+                        val !== undefined ? services += val + ', ' : '';
+                    });
+                    services = services.slice(0, -2);
+
+                    formData.set('services', services);
+                }
+
+                let radio1 = $('.vor_ort_service__row-4 .vor_ort_service__summary-info div', ob);
+                if (radio1.length > 0) {
+                    formData.set('radio1', radio1.text());
+                }
+
+                formData.set('brand', $('.vor_ort_service__row-6 .vor_ort_service__summary-info div', ob).text());
+                formData.set('number', $('.vor_ort_service__row-7 .vor_ort_service__summary-info div', ob).text());
+                formData.set('klm', $('.vor_ort_service__row-8 .vor_ort_service__summary-info div', ob).text());
+                /* formData.set('model', $('.vor_ort_service__row-9 .vor_ort_service__summary-info div', ob).text()); */
+                formData.set('number2', $('.vor_ort_service__inputNumber2').val());
+
+                let text = $('.vor_ort_service__row-11 .vor_ort_service__summary-info div', ob);
+                if (text.length > 0) {
+                    formData.set('text', text.text());
+                }
+
+                formData.set('name', name);
+                formData.set('email', email);
+                formData.set('phone', phone);
+                formData.set('salutation', $('input[name="salutation_vor"]:checked').val());
+                formData.set('available', available);
+                formData.set('memo', $('.vor_ort_service__step_1 textarea[name="memo"]').val());
+                formData.set('wheels', $('.vor_ort_service__step_1 input[name="wheelRadio_vor"]:checked').val());
+                formData.set('sourcenum', $('input[name="poleMark_vor"]').val());
+
+                $.ajax({
+                    url: '/ajax/vor_ort_service.php',
+                    dataType: 'text',
+                    type: 'post',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    beforeSend: function () {
+                        setPreloadvor_ort_service();
+                    },
+                    success: function (data) {
+                        unsetPreloadvor_ort_service();
+                        if (data == 'ok') {
+                            $('.appointmentModal .modal-title').text('Anfrage gesendet');
+                            $('.appointmentModal .modal-body p').html('Ihre Anfrage wird in Kürze bearbeitet.');
+                            resetvor_ort_service();
+                            $('#modal_contact2').fadeOut();
+
+                            $('.appointmentModal').modal('show');
+                            $('.appointmentModal').on('hidden.bs.modal', function (e) {
+                                $('html').css({
+                                    'overflow': 'auto'
+                                });
+                            });
+                        } else {
+                            $('.appointmentModal .modal-title').text('Ein Fehler ist aufgetreten.');
+                            $('.appointmentModal .modal-body p').html('Versuchen Sie erneut, das Formular zu senden.');
+
+                            $('.appointmentModal').modal('show');
+                        }
+
+                        /* setTimeout(function () {
+                            $('.appointmentModal').modal('hide');
+                        }, 4000); */
+                    }
+                });
+            }
+        }
+    });
+
+    $(document).on('change', '.vor_ort_service__step_1 input[type="checkbox"]', function () {
+        leistungen_vor = '';
+        $('.vor_ort_service__step_1 input[type="checkbox"]:checked').each(function (i, elem) {
+            leistungen_vor = leistungen_vor ? leistungen_vor + ', ' + $(this).val() : $(this).val();
+        });
+
+        if (leistungen_vor == 'Räderwechsel') {
+            $('.vor_ort_service__step_1 .form-group-wheels_vor').slideDown();
+        }
+        else {
+            $('.vor_ort_service__step_1 .form-group-wheels_vor').slideUp();
+        }
+    });
+});
+
+function vor_ort_serviceSetData(poleMark, leistungen_vor) {
+    if ($('.vor_ort_service__buttons ._3EQhu').length == 0) {
+        let ob = $('.vor_ort_service__step:visible'),
+            step_vor = parseInt(ob.data('step'));
+        $.ajax({
+            url: 'ajax/appointmentGetData.php',
+            dataType: 'json',
+            type: 'post',
+            data: { poleMark: poleMark },
+            beforeSend: function () {
+                setPreloadvor_ort_service();
+            },
+            success: function (data) {
+                unsetPreloadvor_ort_service();
+                if (data.brand) {
+                    $('.vor_ort_service__row-7 .vor_ort_service__summary-info').html('');
+                    $('.vor_ort_service__row-7 .vor_ort_service__summary-info').append('<div>' + poleMark + '</div>');
+                    $('.vor_ort_service__inputNumber2').val(data.fahrgestellnummer);
+                }
+
+                if (leistungen_vor == 'Räderwechsel') {
+                    ob.hide();
+                    $('.vor_ort_service__step_5').show();
+                    progressBar_vor(50, step_vor, '+');
+                    $('.vor_ort_service__progress-point:eq(3)').addClass('active');
+
+                    $('.vor_ort_service__btn_next').addClass('d-none');
+                    $('.vor_ort_service__btn_send').removeClass('d-none');
+                }
+                else {
+                    ob.hide().next().show();
+                    //progress bar
+                    progressBar_vor(25, step_vor, '+');
+                }
+            }
+        });
+    }
+}
+
+function progressBar_vor(percent, step_vor, symbolval) {
+    let width = 0;
+    if (symbolval == '+') {
+        width = Number($('.vor_ort_service .progress-bar').attr('aria-valuenow')) + percent;
+    }
+    else {
+        width = Number($('.vor_ort_service .progress-bar').attr('aria-valuenow')) - percent;
+    }
+
+    $('.vor_ort_service .progress-bar').attr('aria-valuenow', width);
+    $('.vor_ort_service .progress-bar').animate({
+        width: width + '%'
+    }, 100);
+
+    if (symbolval == '+') {
+        setTimeout(function () {
+            $('.vor_ort_service__progress-point:eq(' + step_vor + ')').addClass('active');
+        }, 100);
+    }
+    else {
+        setTimeout(function () {
+            $('.vor_ort_service__progress-point:eq(' + step_vor + '), .vor_ort_service__progress-point:eq(4)').removeClass('active');
+        }, 100);
+    }
+}
+
+function setPreloadvor_ort_service() {
+    $('#modal_contact2 ._2Uzhy').append('<div class="over"></div>')
+    $('.vor_ort_service__buttons').append('<div class="_3EQhu"><div></div></div>');
+}
+
+function unsetPreloadvor_ort_service() {
+    $('.vor_ort_service__buttons ._3EQhu, #modal_contact2 ._2Uzhy .over').remove();
+}
+
+function resetvor_ort_service() {
+    //content
+    $('.vor_ort_service__summary-info').html('');
+    $('.vor_ort_service__step_5').hide();
+    $('.vor_ort_service__btn_send, .vor_ort_service__btn_prev').addClass('d-none');
+    $('.vor_ort_service__step_1').show();
+    $('.vor_ort_service__btn_next').removeClass('d-none');
+
+    //inputs
+    $('.vor_ort_service input[type="text"], .vor_ort_service textarea').val('');
+    $('#timeField_vor').val('8:00');
+    $('.vor_ort_service select[name="brand"], .vor_ort_service__step_1 textarea[name="memo"], .vor_ort_service__inputNumber2').val('');
+    $('.vor_ort_service input[type="radio"], .vor_ort_service input[type="checkbox"]').prop('checked', false);
+    $('.vor_ort_service #wheelRadio2_vor, #customRadioInline2_vor, #customRadioInline4_vor').prop('checked', true);
+    $('.vor_ort_service input[name="salutation_vor"]').val('Herr');
+    $('#customRadioInlineSalutation2_vor').prop('checked', true);
+    $('.form-group-number_vor, .form-group-wheels_vor').hide();
+
+    //progress bar
+    $('.vor_ort_service__progress .progress-bar').attr('style', '').attr('aria-valuenow', 0);
+    $('.vor_ort_service__progress-point:not(:first-child)').removeClass('active');
+}
+
+function setDateNumberDays_vor(n, picker3_vor = '') {
+    let dateNum = moment().add({ days: n }).toDate(),
+        day = String(dateNum.getDate()).padStart(2, '0'),
+        m = String(dateNum.getMonth() + 1).padStart(2, '0'),
+        y = dateNum.getFullYear(),
+        fulldate = day + '.' + m + '.' + y;
+    $('.vor_ort_service__content #dateField_vor').val(fulldate);
+    picker3_vor.setDate(dateNum);
+}
+
+function setTimelines_vor(date) {
+    let ob = $('#timeField_vor');
+    ob.html($('.sourceTimeFull').html()).val('8:00');
+    ob.removeClass('short').addClass('full');
+
+    if (date.getDay() === 6) {
+        if (ob.hasClass('full')) {
+            ob.html($('.sourceTimeShort').html()).val('8:00');
+            ob.removeClass('full').addClass('short');
+        }
+    }
+}

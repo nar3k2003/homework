@@ -1,0 +1,640 @@
+$(function () {
+    let picker3 = '';
+
+    /* Appointment */
+    let leistungen = '',
+        ob = '',
+        step = '',
+        stepNext = '';
+
+    $(document).on('click', '.appointment__btn_next', function () {
+        ob = $('.appointment__step:visible');
+        step = ob.data('step');
+        stepNext = step + 1;
+        let errors = false;
+
+        switch (step) {
+            case 1:
+                let raderwechsel = false;
+                $('.appointment__step_1 .text-danger').addClass('d-none');
+
+                // checking checkboxs
+                $('input[type="checkbox"]', ob).each(function () {
+                    if (!$(this).prop('checked')) {
+                        errors = true;
+                    } else {
+                        errors = false;
+                        return false;
+                    }
+                });
+
+                // checking radiobuttons [name="wheelRadio"]
+                if (!errors) {
+                    $('input[type="checkbox"]:checked', ob).each(function (i, elem) {
+                        if ($(this).val() === 'Räderwechsel') {
+                            raderwechsel = true;
+                            return false;
+                        }
+                    });
+
+                    if (raderwechsel) {
+                        $('input[name="wheelRadio"]', ob).each(function () {
+                            if (!$(this).prop('checked')) {
+                                errors = true;
+                            } else {
+                                errors = false;
+                                return false;
+                            }
+                        });
+                    }
+                }
+
+                // checking radiobuttons [name="umfang"]
+                if (!errors && raderwechsel) {
+                    $('input[name="umfang"]', ob).each(function () {
+                        if (!$(this).prop('checked')) {
+                            errors = true;
+                        } else {
+                            errors = false;
+                            return false;
+                        }
+                    });
+                }
+
+                if (errors) {
+                    $('.appointment__step_1 .text-danger').removeClass('d-none');
+                } else {
+                    $('.appointment__row-1 .appointment__summary-info').html('');
+                    leistungen = '';
+                    $('input[type="checkbox"]:checked', ob).each(function (i, elem) {
+                        $('.appointment__row-1 .appointment__summary-info').append('<div>' + $(this).val() + '</div>');
+                        leistungen = leistungen ? leistungen + ', ' + $(this).val() : $(this).val();
+                    });
+
+                    if (leistungen == 'Räderwechsel') {
+                        $('.appointment__step_3 .appointment__content .form-group:last-child').hide();
+                        $('.appointment__step_3 #customRadioInline4').prop('checked', true);
+                        if ($('input[name="wheelRadio"]:checked').val() == 'Ja') {
+                            $('.appointment__step_3 #customRadioInline1').prop('checked', true);
+                            $('.appointment__step_3 .appointment__content .form-group:first-child').hide();
+                            $('.appointment__step_3 .form-group-number').show();
+                        }
+                        else {
+                            $('.appointment__step_3 #customRadioInline2').prop('checked', true);
+                            $('.appointment__step_3 .appointment__content .form-group:first-child').show();
+                            $('.appointment__step_3 .form-group-number').hide();
+                        }
+                    }
+                    else {
+                        $('.appointment__step_3 #customRadioInline2').prop('checked', true);
+                        $('.appointment__step_3 .appointment__content .form-group:last-child').show();
+
+                        $('.appointment__step_3 .appointment__content .form-group:first-child').show();
+                        $('.appointment__step_3 .form-group-number').hide();
+                    }
+                }
+                break;
+            case 2:
+                $('#dateField, #timeField').removeClass('er-form');
+
+                let dateVal = $('#dateField').val(),
+                    timeVal = $('#timeField').val();
+
+                if (!dateVal || dateVal.length < 8) {
+                    $('#dateField').addClass('er-form');
+                    errors = true;
+                }
+                else if (!timeVal) {
+                    $('#timeField').addClass('er-form');
+                    errors = true;
+                }
+                else {
+                    $('.appointment__row-2 .appointment__summary-info').html('<div>' + dateVal + '</div>');
+                    $('.appointment__row-3 .appointment__summary-info').html('<div>' + timeVal + '</div>');
+                }
+                break;
+            case 3:
+                $('.appointment__row-4, .appointment__row-5').addClass('d-none').find('.appointment__summary-info').html('');
+
+                let check1 = $('.appointment__step_3 input[name="customRadioInline1"]:checked').val(),
+                    check2 = $('.appointment__step_3 input[name="customRadioInline2"]:checked').val();
+
+                unsetPreloadAppointment();
+                if (check1 != 'Nein, noch nicht') {
+                    let poleMark = $('input[name="poleMark"]').val();
+                    $('input[name="poleMark"]').removeClass('er-form');
+                    errors = true;
+                    if (!poleMark) {
+                        $('input[name="poleMark"]').addClass('er-form');
+                    }
+                    else {
+                        appointmentSetData(poleMark, leistungen);
+                        $('.appointment__inputNumber').val(poleMark);
+                    }
+                }
+                $('.appointment__row-4').removeClass('d-none').find('.appointment__summary-info').html('<div>' + check1 + '</div>');
+
+
+                $('.appointment__row-5').removeClass('d-none').find('.appointment__summary-info').html('<div>' + check2 + '</div>');
+
+                break;
+            case 4:
+                $('select, input[type="text"]', ob).removeClass('er-form');
+
+                let brand = $('select[name="brand"]', ob).val(),
+                    klm = $('.appointment__inputKlm', ob).val(),
+                    number = $('.appointment__inputNumber', ob).val(),
+                    number2 = $('.appointment__inputNumber2', ob).val(),
+                    /* model = $('.appointment__inputModel', ob).val(), */
+                    text = $('.appointment__inputText', ob).val(),
+                    client = $('.appointment__step_3 input[name="customRadioInline1"]:checked').val();
+
+                if (client == 'Ja') {
+                    if (!brand || !klm || !number) {
+                        !brand ? $('select[name="brand"]', ob).addClass('er-form') : '';
+                        !klm ? $('.appointment__inputKlm', ob).addClass('er-form') : '';
+                        !number ? $('.appointment__inputNumber', ob).addClass('er-form') : '';
+
+                        errors = true;
+                    } else {
+                        $('.appointment__row-11').addClass('d-none').find('.appointment__summary-info').html('');
+
+                        $('.appointment__row-6 .appointment__summary-info').html('<div>' + brand + '</div>');
+                        $('.appointment__row-7 .appointment__summary-info').html('<div>' + number + '</div>');
+                        $('.appointment__row-8 .appointment__summary-info').html('<div>' + klm + '</div>');
+                        $('.appointment__row-9').addClass('d-none').find('.appointment__summary-info').html('');
+                        $('.appointment__row-10').addClass('d-none').find('.appointment__summary-info').html('');
+
+                        if (text) {
+                            $('.appointment__row-11').removeClass('d-none').find('.appointment__summary-info').html('<div>' + text + '</div>');
+                        }
+                    }
+                } else {
+                    if (!brand || !klm || !number || !number2) {
+                        !brand ? $('select[name="brand"]', ob).addClass('er-form') : '';
+                        !klm ? $('.appointment__inputKlm', ob).addClass('er-form') : '';
+                        !number ? $('.appointment__inputNumber', ob).addClass('er-form') : '';
+                        !number2 ? $('.appointment__inputNumber2', ob).addClass('er-form') : '';
+                        /* !model ? $('.appointment__inputModel', ob).addClass('er-form') : ''; */
+
+                        errors = true;
+                    } else {
+                        $('.appointment__row-11').addClass('d-none').find('.appointment__summary-info').html('');
+
+                        $('.appointment__row-6 .appointment__summary-info').html('<div>' + brand + '</div>');
+                        $('.appointment__row-7 .appointment__summary-info').html('<div>' + number + '</div>');
+                        $('.appointment__row-8 .appointment__summary-info').html('<div>' + klm + '</div>');
+                        /* $('.appointment__row-9').removeClass('d-none').find('.appointment__summary-info').html('<div>' + model + '</div>'); */
+                        $('.appointment__row-10').removeClass('d-none').find('.appointment__summary-info').html('<div>' + number2 + '</div>');
+
+                        if (text) {
+                            $('.appointment__row-11').removeClass('d-none').find('.appointment__summary-info').html('<div>' + text + '</div>');
+                        }
+                    }
+                }
+                break;
+        }
+
+        if (!errors) {
+            let percent = 25;
+            if (step == 1 && leistungen == 'Räderwechsel') {
+                let service = $('input[name="wheelRadio"]:checked').val();
+                $.ajax({
+                    url: 'ajax/appointmentTireGetData.php',
+                    dataType: 'json',
+                    type: 'post',
+                    data: {service: service},
+                    beforeSend: function () {
+                        setPreloadAppointment();
+                    },
+                    success: function (data) {
+                        unsetPreloadAppointment();
+
+                        // Pikaday
+                        picker3 ? picker3.destroy() : '';
+
+                        let date_format = moment().add({days: data.days}).format('YYYY-MM-DD');
+                        picker3 = new Pikaday({
+                            field: document.getElementById('dateField'),
+                            firstDay: 1,
+                            format: 'DD.MM.YYYY',
+                            minDate: moment().add({
+                                days: data.days
+                            }).toDate(),
+                            yearRange: 0,
+                            disableDayFn: date => exceptionDate2(date, date_format, data, true),
+                            onSelect: function (date) {
+                                let selectedDate = moment(picker3.getDate()).format("YYYY-MM-DD");
+
+                                $.ajax({
+                                    url: 'ajax/appointmentTireGetTime.php',
+                                    dataType: 'html',
+                                    type: 'post',
+                                    data: { date: selectedDate },
+                                    beforeSend: function () {
+                                        setPreloadAppointment();
+                                    },
+                                    success: function (dataTime) {
+                                        $('#timeField').html(dataTime);
+                                        unsetPreloadAppointment();
+                                    }
+                                });
+                            },
+                            i18n: i18n
+                        });
+                        setDateNumberDays(data.days, picker3);
+
+                        ob.hide().next().show();
+                        $('.appointment__btn_prev').removeClass('d-none');
+
+                        //progress bar
+                        progressBar(percent, step, '+');
+                    }
+                });
+            }
+            else {
+                if (step == 1) {
+                    // Pikaday
+                    picker3 ? picker3.destroy() : '';
+                    //var num_days = 8;
+                    var num_days = 15; // 8 plus 7 = 15 days
+
+                    while (holydaysFull.includes(moment().add({ days: num_days }).format('D.MM.YYYY')))
+                        num_days += 1;
+                    var date = moment().add({ days: num_days }).toDate();
+                    date.getDay() == 0 ? num_days++ : '';
+                    date.getDay() == 6 ? num_days = num_days + 2 : '';
+                    while (holydaysFull.includes(moment().add({ days: num_days }).format('D.MM.YYYY')))
+                        num_days += 1;
+
+                    date = moment().add({days: num_days}).toDate();
+                    let date_format = moment().add({days: num_days}).format('YYYY-MM-DD');
+
+                    picker3 = new Pikaday({
+                        field: document.getElementById('dateField'),
+                        firstDay: 1,
+                        format: 'DD.MM.YYYY',
+                        minDate: moment().add({days: num_days}).toDate(),
+                        yearRange: 0,
+                        disableDayFn: date => exceptionDate(date, date_format, true),
+                        onSelect: function (date) {
+                            setTimelines(date);
+                        },
+                        i18n: i18n
+                    });
+                    setDateNumberDays(num_days, picker3);
+                    //setTimelines(date);
+                    ob.hide().next().show();
+                }
+                else if (step == 3 && leistungen == 'Räderwechsel') {
+                    ob.hide();
+                    $('.appointment__step_5').show();
+                    stepNext = 5;
+                    step = 4;
+                    percent = 50;
+                    $('.appointment__progress-point:eq(3)').addClass('active');
+                }
+                else {
+                    ob.hide().next().show();
+                }
+
+                if (stepNext == 5) {
+                    $('.appointment__btn_next').addClass('d-none');
+                    $('.appointment__btn_send').removeClass('d-none');
+                }
+
+                $('.appointment__btn_prev').removeClass('d-none');
+
+                //progress bar
+                progressBar(percent, step, '+');
+            }
+        }
+    });
+
+    $(document).on('click', '.appointment__btn_prev', function () {
+        let ob = $('.appointment__step:visible'),
+            step = ob.data('step'),
+            stepPrev = step - 1,
+            percent = 25;
+
+        if (step == 5 && leistungen == 'Räderwechsel') {
+            stepPrev = 3;
+            ob.hide();
+            $('.appointment__step_3').show();
+            percent = 50;
+        }
+        else {
+            ob.hide().prev().show();
+        }
+        stepPrev == 1 ? $('.appointment__btn_prev').addClass('d-none') : '';
+
+        $('.appointment__btn_send').addClass('d-none');
+        $('.appointment__btn_next').removeClass('d-none');
+
+        //progress bar
+        progressBar(percent, stepPrev, '-');
+    });
+
+    $(document).on('change', '.appointment__step_3 input[name="customRadioInline1"]', function () {
+        unsetPreloadAppointment();
+        if ($(this).val() == 'Ja') {
+            /* $('.appointment__step_4 .form-row2>div:nth-child(2), .appointment__step_4 .form-row3').addClass('d-none'); */
+            $('.appointment__step_4 .form-row2').addClass('d-none');
+            $('.appointment__step_3 .form-group-number').slideDown();
+        } else {
+            /* $('.appointment__step_4 .form-row2>div:nth-child(2), .appointment__step_4 .form-row3').removeClass('d-none'); */
+            $('.appointment__step_4 .form-row2').removeClass('d-none');
+            $('.appointment__step_3 .form-group-number input[name="poleMark"]').val('');
+            $('.appointment__step_3 .form-group-number').slideUp();
+        }
+    });
+
+    let isAjaxBusy = false;
+    $(document).on('click', '.appointment__btn_send', function () {
+        $('.appointment__step_5 input[type="text"]').removeClass('er-form');
+        $('.appointment__step_5 .text-danger').addClass('d-none');
+
+        let ob = $('.appointment__step_5'),
+            name = $('.appointment__inputName').val(),
+            email = $('.appointment__inputEmail').val(),
+            phone = $('.appointment__inputPhone').val(),
+            available = '',
+            re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+        //available
+        $('.custom-control-input-available:checked', ob).each(function (i, elem) {
+            available += $(this).val() + ', ';
+        });
+        if (available) available = available.slice(0, -2);
+
+        if (!name || !email || !phone || !available) {
+            !name ? $('.appointment__inputName').addClass('er-form') : '';
+            !email ? $('.appointment__inputEmail').addClass('er-form') : '';
+            !phone ? $('.appointment__inputPhone').addClass('er-form') : '';
+            !available ? $('.text-danger', ob).removeClass('d-none') : '';
+        }
+        else {
+            if (!re.test(email)) {
+                $('.appointment__inputEmail').addClass('er-form');
+            }
+            else {
+                if (!$('.modalContactFormTab2 #consentCheck2').is(':checked')) {
+                    $('.appointment__step_5 .text-danger').removeClass('d-none');
+                }
+                else {
+                    let date = $('.appointment__row-2 .appointment__summary-info div').first().text();
+                    let formData = new FormData();
+                    formData.set('date', date);
+                    formData.set('time', $('.appointment__row-3 .appointment__summary-info div').first().text());
+
+                    let obServices = $('.appointment__row-1 .appointment__summary-info div', ob);
+                    if (obServices.length > 0) {
+                        let services = '';
+                        obServices.each(function () {
+                            let val = $(this).text();
+                            val !== undefined ? services += val + ', ' : '';
+                        });
+                        services = services.slice(0, -2);
+
+                        formData.set('services', services);
+                    }
+
+                    let radio1 = $('.appointment__row-4 .appointment__summary-info div', ob);
+                    if (radio1.length > 0) {
+                        formData.set('radio1', radio1.text());
+                    }
+
+                    let radio2 = $('.appointment__row-5 .appointment__summary-info div', ob);
+                    if (radio2.length > 0) {
+                        formData.set('radio2', radio2.text());
+                    }
+
+                    formData.set('brand', $('.appointment__row-6 .appointment__summary-info div', ob).text());
+                    formData.set('number', $('.appointment__row-7 .appointment__summary-info div', ob).text());
+                    formData.set('klm', $('.appointment__row-8 .appointment__summary-info div', ob).text());
+                    /* formData.set('model', $('.appointment__row-9 .appointment__summary-info div', ob).text()); */
+                    formData.set('number2', $('.appointment__inputNumber2').val());
+
+                    let text = $('.appointment__row-11 .appointment__summary-info div', ob);
+                    if (text.length > 0) {
+                        formData.set('text', text.text());
+                    }
+
+                    formData.set('name', name);
+                    formData.set('email', email);
+                    formData.set('phone', phone);
+                    formData.set('salutation', $('input[name="salutation"]:checked').val());
+                    formData.set('available', available);
+                    formData.set('memo', $('.appointment__step_1 textarea[name="memo"]').val());
+                    formData.set('wheels', $('.appointment__step_1 input[name="wheelRadio"]:checked').val());
+                    formData.set('umfang', $('.appointment__step_1 input[name="umfang"]:checked').val());
+                    formData.set('sourcenum', $('input[name="poleMark"]').val());
+
+                    $.ajax({
+                        url: '/ajax/appointment.php',
+                        dataType: 'text',
+                        type: 'post',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        beforeSend: function () {
+                            if (isAjaxBusy) {
+                                return false;
+                            }
+                            else {
+                                isAjaxBusy = true;
+                                setPreloadAppointment();
+                            }
+                        },
+                        success: function (data) {
+                            unsetPreloadAppointment();
+                            if (data == 'ok') {
+                                if (formData.get('services') == 'Räderwechsel') {
+
+                                    const date1 = new Date('2024-03-25');
+                                    const date2 = new Date('2024-05-17');
+                                    const dateSplit = date.split('.');
+                                    const dateStr = dateSplit[2] + '-' + dateSplit[1] + '-' + dateSplit[0];
+                                    const getDate = new Date(dateStr);
+
+                                    if (getDate.getTime() >= date1.getTime() && getDate.getTime() <= date2.getTime()) {
+                                        $('.appointmentModal .modal-title').text('VIELEN DANK!');
+                                        $('.appointmentModal .modal-body p').html('Ihr Termin wurde reserviert.');
+                                    }
+                                    else {
+                                        $('.appointmentModal .modal-title').text('Vielen Dank für Ihre Nachricht!');
+                                        $('.appointmentModal .modal-body p').html('Ihre Anfrage wird in Kürze bearbeitet.');
+                                    }
+                                }
+                                else {
+                                    $('.appointmentModal .modal-title').text('Vielen Dank für Ihre Nachricht!');
+                                    $('.appointmentModal .modal-body p').html('Ihre Anfrage wird in Kürze bearbeitet.');
+                                }
+                                resetAppointment();
+                                $('#modal_contact').fadeOut();
+                                $("#modal_contact_header").attr('style','display:block');
+                                $('.appointmentModal').modal('show');
+                                $('.appointmentModal').on('hidden.bs.modal', function (e) {
+                                    $('html').css({
+                                        'overflow': 'auto'
+                                    });
+                                });
+                            } else {
+                                $('.appointmentModal .modal-title').text('Ein Fehler ist aufgetreten.');
+                                $('.appointmentModal .modal-body p').html('Versuchen Sie erneut, das Formular zu senden.');
+
+                                $('.appointmentModal').modal('show');
+                            }
+
+                            isAjaxBusy = false;
+                        }
+                    });
+                }
+            }
+        }
+    });
+
+    $('#customCheck6').click(function () {
+        if ($(this).is(':checked')) {
+            $('.form-row-memo').slideDown(400);
+        }
+        else {
+            $('.form-row-memo').slideUp(400);
+            setTimeout(function () {
+                $('.form-row-memo textarea[name="memo"]').val('');
+            }, 400);
+        }
+    });
+
+    $(document).on('change', '.appointment__step_1 input[type="checkbox"]', function () {
+        leistungen = '';
+        $('.appointment__step_1 input[type="checkbox"]:checked').each(function (i, elem) {
+            leistungen = leistungen ? leistungen + ', ' + $(this).val() : $(this).val();
+        });
+
+        if ($('#customCheck1').prop('checked') && $('.appointment__step_1 .form-group-wheels').is(':hidden')) {
+            $('.appointment__step_1 .form-group-wheels').slideDown();
+        }
+        else if (!$('#customCheck1').prop('checked')) {
+            $('.appointment__step_1 .form-group-wheels').slideUp();
+        }
+    });
+});
+
+function appointmentSetData(poleMark, leistungen) {
+    if ($('.appointment__buttons ._3EQhu').length == 0) {
+        let ob = $('.appointment__step:visible'),
+            step = parseInt(ob.data('step'));
+        $.ajax({
+            url: 'ajax/appointmentGetData.php',
+            dataType: 'json',
+            type: 'post',
+            data: { poleMark: poleMark },
+            beforeSend: function () {
+                setPreloadAppointment();
+            },
+            success: function (data) {
+                unsetPreloadAppointment();
+                if (data.brand) {
+                    $('.appointment__row-7 .appointment__summary-info').html('');
+                    $('.appointment__row-7 .appointment__summary-info').append('<div>' + poleMark + '</div>');
+                    $('.appointment__inputNumber2').val(data.fahrgestellnummer);
+                }
+
+                if (leistungen == 'Räderwechsel') {
+                    ob.hide();
+                    $('.appointment__step_5').show();
+                    progressBar(50, step, '+');
+                    $('.appointment__progress-point:eq(3)').addClass('active');
+
+                    $('.appointment__btn_next').addClass('d-none');
+                    $('.appointment__btn_send').removeClass('d-none');
+                }
+                else {
+                    ob.hide().next().show();
+                    //progress bar
+                    progressBar(25, step, '+');
+                }
+            }
+        });
+    }
+}
+
+function progressBar(percent, step, symbolval) {
+    let width = 0;
+    if (symbolval == '+') {
+        width = Number($('.appointment .progress-bar').attr('aria-valuenow')) + percent;
+    }
+    else {
+        width = Number($('.appointment .progress-bar').attr('aria-valuenow')) - percent;
+    }
+
+    $('.appointment .progress-bar').attr('aria-valuenow', width);
+    $('.appointment .progress-bar').animate({
+        width: width + '%'
+    }, 100);
+
+    if (symbolval == '+') {
+        setTimeout(function () {
+            $('.appointment__progress-point:eq(' + step + ')').addClass('active');
+        }, 100);
+    }
+    else {
+        setTimeout(function () {
+            $('.appointment__progress-point:eq(' + step + '), .appointment__progress-point:eq(4)').removeClass('active');
+        }, 100);
+    }
+}
+
+function setPreloadAppointment() {
+    $('#modal_contact ._2Uzhy').append('<div class="over"></div>')
+    $('.appointment__buttons').append('<div class="_3EQhu"><div></div></div>');
+}
+
+function unsetPreloadAppointment() {
+    $('.appointment__buttons ._3EQhu, #modal_contact ._2Uzhy .over').remove();
+}
+
+function resetAppointment() {
+    //content
+    $('.appointment__summary-info').html('');
+    $('.appointment__step_5').hide();
+    $('.appointment__btn_send, .appointment__btn_prev').addClass('d-none');
+    $('.appointment__step_1').show();
+    $('.appointment__btn_next').removeClass('d-none');
+
+    //inputs
+    $('.appointment input[type="text"], .appointment textarea').val('');
+    $('#timeField').val('8:00');
+    $('.appointment select[name="brand"], .appointment__step_1 textarea[name="memo"], .appointment__inputNumber2').val('');
+    $('.appointment input[type="radio"], .appointment input[type="checkbox"]').prop('checked', false);
+    $('.appointment #wheelRadio2, .appointment #umfang1, #customRadioInline2, #customRadioInline4').prop('checked', true);
+    $('.appointment input[name="salutation"]').val('Herr');
+    $('#customRadioInlineSalutation2').prop('checked', true);
+    $('.form-row-memo, .form-group-number, .form-group-wheels').hide();
+
+    //progress bar
+    $('.appointment__progress .progress-bar').attr('style', '').attr('aria-valuenow', 0);
+    $('.appointment__progress-point:not(:first-child)').removeClass('active');
+}
+
+function setDateNumberDays(n, picker3 = '') {
+    var dateNum = moment().add({ days: n }).format('DD.MM.YYYY');
+    var dateNum2 = moment().add({ days: n }).format('YYYY-MM-DD');
+
+    $('.appointment__content #dateField').val(dateNum);
+    picker3.setDate(dateNum2);
+}
+
+function setTimelines(date) {
+    let ob = $('#timeField');
+    ob.html($('.sourceTimeFull').html()).val('8:00');
+    ob.removeClass('short').addClass('full');
+
+    if (date.getDay() === 6) {
+        if (ob.hasClass('full')) {
+            ob.html($('.sourceTimeShort').html()).val('8:00');
+            ob.removeClass('full').addClass('short');
+        }
+    }
+}
